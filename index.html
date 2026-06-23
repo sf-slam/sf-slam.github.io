@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+<link rel="icon" type="image/png" href="images/favicon.png">
 <style>
   /* ---- Nerfies / WildGS template essentials ---- */
   body { font-family:'Noto Sans', sans-serif; }
@@ -155,16 +156,11 @@
         SF-SLAM overcomes cumulative drift in challenging stair scenes by leveraging structural regularities.</figcaption>
       </figure>
       <p class="tldr-line">
-        <b>TL;DR:</b> Structural SLAM stays accurate within a single floor (<b>intra-floor</b>) by assuming a
-        Manhattan world, but the slanted walls and steps of staircases and <b>inter-floor</b> transitions break this
-        assumption, so the camera accumulates drift and loses tracking in these textureless, repetitive scenes. We
-        instead build on the <b>San Francisco World (SFW)</b>: a compact structural model that extends the Manhattan
-        triad with four equally inclined sloping directions, representing inclined stairs and ramps with just 4
-        degrees of freedom. From SFW, SF-SLAM recovers a drift-free absolute rotation and removes the rotational
-        component from the estimated state; once rotation is fixed, planes and slanted lines collapse to compact
-        1-D invariant coordinates, turning 6-DoF SLAM into a single <b>linear Kalman filter</b> with no Jacobians
-        and no accumulated linearization error. This extends the efficiency of linear structural SLAM from
-        intra-floor to inter-floor settings, giving state-of-the-art drift suppression even without loop closure.
+        <b>TL;DR:</b> Staircases and <b>inter-floor</b> transitions add slanted structure that breaks the Manhattan
+        world and makes most structural SLAM drift. Using the <b>San Francisco World</b> (Manhattan triad + four
+        equally inclined slope directions), SF-SLAM fixes a drift-free rotation and turns planes and slanted lines
+        into 1-D coordinates, extending efficient linear-Kalman-filter SLAM from <b>intra-floor</b> to inter-floor
+        scenes.
       </p>
     </div>
   </div>
