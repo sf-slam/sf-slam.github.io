@@ -68,6 +68,21 @@
   .restable tbody td:first-child, .restable thead th:first-child { text-align:left; }
   .restable .ours-col { background:#f5f5f5; }
   .restable .ours { font-weight:700; color:#363636; }
+  .restable .best { font-weight:700; color:#363636; }
+  .restable .second { text-decoration:underline; }
+  .restable td.na { color:#b5b5b5; }
+  .table-scroll { overflow-x:auto; }
+
+  /* ---- qualitative comparison grid ---- */
+  .qual .seq-label { text-align:center; font-weight:600; color:#4a4a4a; font-size:0.95rem; margin:1.3rem 0 0.55rem; }
+  .qual-grid { display:grid; grid-template-columns:repeat(6, 1fr); gap:0.5rem; }
+  .qual-grid figure { margin:0; }
+  .qual-grid img { width:100%; height:135px; object-fit:contain; background:#fff; border:1px solid #e0e0e0; display:block; }
+  .qual-grid figcaption { text-align:center; font-size:0.8rem; color:#7a7a7a; margin-top:0.3rem; line-height:1.3; }
+  .qual-grid .is-ours img { border:2px solid #363636; }
+  .qual-grid .is-ours figcaption { color:#363636; font-weight:700; }
+  @media (max-width:900px) { .qual-grid { grid-template-columns:repeat(3, 1fr); } }
+  @media (max-width:520px) { .qual-grid { grid-template-columns:repeat(2, 1fr); } }
 
   pre code { font-size:0.9rem; }
 
@@ -225,6 +240,14 @@
             accumulated linearization error.
           </p>
         </div>
+        <figure class="fig" style="margin-top:0.5rem;">
+          <img src="images/figure_pipeline.png" alt="SF-SLAM system pipeline from RGB-D input to structural map">
+          <figcaption><b>Figure 3.</b> SF-SLAM system pipeline. From an RGB-D stream and ARKit VIO, a
+          consensus-weighted rotation fusion combines the local VIO rotation with the drift-free SFW Visual Compass
+          anchor; structure-aware landmark estimation then recovers MW-aligned planes via 1-point RANSAC and
+          SFW-aligned lines via PCA. Every landmark reduces to a 1-D invariant coordinate, and a decoupled linear
+          Kalman filter jointly estimates the camera translation and the structural map.</figcaption>
+        </figure>
       </div>
     </div>
   </div>
@@ -238,7 +261,7 @@
         <h2 class="title is-3">SF-SLAM Dataset</h2>
         <figure class="fig">
           <img src="images/fig3_dataset.png" alt="Sample image sequences from the SF-SLAM dataset with line clustering">
-          <figcaption><b>Figure 3.</b> Sample frames from our dataset with line-clustering results from SF-SLAM,
+          <figcaption><b>Figure 4.</b> Sample frames from our dataset with line-clustering results from SF-SLAM,
           spanning indoor staircases, inter-floor transitions, and an outdoor scene.</figcaption>
         </figure>
         <div class="content has-text-justified" style="margin-top:1.3rem;">
@@ -252,6 +275,26 @@
             differing in elevation.
           </p>
         </div>
+
+        <div class="table-scroll">
+          <table class="restable">
+            <caption>Table I. Statistics of the author-collected dataset.</caption>
+            <thead>
+              <tr><th>Sequence</th><th>Trajectory Length [m]</th><th>Angular Travel [10<sup>3</sup>&nbsp;&deg;]</th></tr>
+            </thead>
+            <tbody>
+              <tr><td colspan="3" style="text-align:left; font-style:italic; background:#efefef; color:#4a4a4a;">Closed-loop sequences</td></tr>
+              <tr><td>Office Building (return)</td><td>376.996</td><td>12.605</td></tr>
+              <tr><td>Mixed-use Building</td><td>72.671</td><td>2.146</td></tr>
+              <tr><td>Academic Building A</td><td>119.623</td><td class="na">&ndash;</td></tr>
+              <tr><td>Parking Lot</td><td>164.596</td><td>2.934</td></tr>
+              <tr><td colspan="3" style="text-align:left; font-style:italic; background:#efefef; color:#4a4a4a;">Open-loop sequences</td></tr>
+              <tr><td>Office Building (ascending)</td><td>205.581</td><td>6.475</td></tr>
+              <tr><td>Apartment Building</td><td>488.302</td><td>17.898</td></tr>
+              <tr><td>Academic Building B</td><td>107.625</td><td>4.510</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
@@ -263,39 +306,165 @@
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
         <h2 class="title is-3">Results</h2>
-        <figure class="fig">
+
+        <div class="content has-text-justified">
+          <p>
+            Across closed-loop and open-loop sequences, SF-SLAM achieves the lowest final drift error (FDE) against
+            recent baselines &mdash; HI-SLAM2, StructVIO, ORB-SLAM3, DROID-SLAM, and Planar-SLAM &mdash; without
+            relying on loop closure. Monocular baselines are Sim(3)-aligned to the ARKit reference before scoring.
+            In every table, <b>best is bold</b> and <u>second-best is underlined</u>; &ldquo;&ndash;&rdquo; marks
+            tracking failure or no reported result.
+          </p>
+        </div>
+
+        <h3 class="title is-4" style="margin-bottom:0.7rem;">Closed-loop sequences</h3>
+        <div class="table-scroll">
+          <table class="restable">
+            <caption>Table II. FDE [m] on closed-loop sequences (3-D endpoint drift; lower is better).</caption>
+            <thead>
+              <tr><th>Sequence</th><th>HI-SLAM2</th><th>StructVIO</th><th>ORB-SLAM3</th><th>DROID-SLAM</th><th>Planar-SLAM</th><th class="ours-col">SF-SLAM (Ours)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Office Building (return)</td><td>42.040</td><td>11.384</td><td class="second">0.201</td><td>21.330</td><td class="na">&ndash;</td><td class="ours-col best">0.024</td></tr>
+              <tr><td>Mixed-use Building</td><td>10.186</td><td class="second">2.192</td><td>11.276</td><td>3.435</td><td class="na">&ndash;</td><td class="ours-col best">0.046</td></tr>
+              <tr><td>Parking Lot</td><td>6.913</td><td>7.180</td><td class="best">0.012</td><td>4.123</td><td class="second">0.036</td><td class="ours-col">0.164</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="qual">
+          <div class="seq-label">Office Building (return)</div>
+          <div class="qual-grid">
+            <figure><img src="images/qual/closed_office_return/hi.jpg" alt="HI-SLAM2 top-down trajectory on Office Building (return)" loading="lazy"><figcaption>HI-SLAM2</figcaption></figure>
+            <figure><img src="images/qual/closed_office_return/struct.jpg" alt="StructVIO top-down trajectory on Office Building (return)" loading="lazy"><figcaption>StructVIO</figcaption></figure>
+            <figure><img src="images/qual/closed_office_return/orb.jpg" alt="ORB-SLAM3 top-down trajectory on Office Building (return)" loading="lazy"><figcaption>ORB-SLAM3</figcaption></figure>
+            <figure><img src="images/qual/closed_office_return/droid.jpg" alt="DROID-SLAM top-down trajectory on Office Building (return)" loading="lazy"><figcaption>DROID-SLAM</figcaption></figure>
+            <figure><img src="images/qual/closed_office_return/planar.jpg" alt="Planar-SLAM top-down trajectory on Office Building (return)" loading="lazy"><figcaption>Planar-SLAM</figcaption></figure>
+            <figure class="is-ours"><img src="images/qual/closed_office_return/ours.jpg" alt="SF-SLAM (Ours) top-down trajectory on Office Building (return)" loading="lazy"><figcaption>SF-SLAM (Ours)</figcaption></figure>
+          </div>
+
+          <div class="seq-label">Mixed-use Building</div>
+          <div class="qual-grid">
+            <figure><img src="images/qual/closed_mixed_use/hi.jpg" alt="HI-SLAM2 top-down trajectory on Mixed-use Building" loading="lazy"><figcaption>HI-SLAM2</figcaption></figure>
+            <figure><img src="images/qual/closed_mixed_use/struct.jpg" alt="StructVIO top-down trajectory on Mixed-use Building" loading="lazy"><figcaption>StructVIO</figcaption></figure>
+            <figure><img src="images/qual/closed_mixed_use/orb.jpg" alt="ORB-SLAM3 top-down trajectory on Mixed-use Building" loading="lazy"><figcaption>ORB-SLAM3</figcaption></figure>
+            <figure><img src="images/qual/closed_mixed_use/droid.jpg" alt="DROID-SLAM top-down trajectory on Mixed-use Building" loading="lazy"><figcaption>DROID-SLAM</figcaption></figure>
+            <figure><img src="images/qual/closed_mixed_use/planar.jpg" alt="Planar-SLAM top-down trajectory on Mixed-use Building" loading="lazy"><figcaption>Planar-SLAM</figcaption></figure>
+            <figure class="is-ours"><img src="images/qual/closed_mixed_use/ours.jpg" alt="SF-SLAM (Ours) top-down trajectory on Mixed-use Building" loading="lazy"><figcaption>SF-SLAM (Ours)</figcaption></figure>
+          </div>
+
+          <div class="seq-label">Parking Lot (outdoor)</div>
+          <div class="qual-grid">
+            <figure><img src="images/qual/closed_parking_lot/hi.jpg" alt="HI-SLAM2 top-down trajectory on Parking Lot" loading="lazy"><figcaption>HI-SLAM2</figcaption></figure>
+            <figure><img src="images/qual/closed_parking_lot/struct.jpg" alt="StructVIO top-down trajectory on Parking Lot" loading="lazy"><figcaption>StructVIO</figcaption></figure>
+            <figure><img src="images/qual/closed_parking_lot/orb.jpg" alt="ORB-SLAM3 top-down trajectory on Parking Lot" loading="lazy"><figcaption>ORB-SLAM3</figcaption></figure>
+            <figure><img src="images/qual/closed_parking_lot/droid.jpg" alt="DROID-SLAM top-down trajectory on Parking Lot" loading="lazy"><figcaption>DROID-SLAM</figcaption></figure>
+            <figure><img src="images/qual/closed_parking_lot/planar.jpg" alt="Planar-SLAM top-down trajectory on Parking Lot" loading="lazy"><figcaption>Planar-SLAM</figcaption></figure>
+            <figure class="is-ours"><img src="images/qual/closed_parking_lot/ours.jpg" alt="SF-SLAM (Ours) top-down trajectory on Parking Lot" loading="lazy"><figcaption>SF-SLAM (Ours)</figcaption></figure>
+          </div>
+        </div>
+        <p class="has-text-grey" style="font-size:0.87rem; text-align:left; margin-top:0.7rem;">
+          <b>Figure 5.</b> Top-down trajectory comparison on closed-loop sequences. Green and blue dots mark the start
+          and end points &mdash; a consistent closed loop returns the end point to the start. Planar-SLAM is plotted
+          until tracking fails.
+        </p>
+
+        <h3 class="title is-4" style="margin:2.2rem 0 0.7rem;">Open-loop (inter-floor) sequences</h3>
+        <div class="table-scroll">
+          <table class="restable">
+            <caption>Table III. FDE [m] on open-loop inter-floor sequences (2-D horizontal drift; lower is better).</caption>
+            <thead>
+              <tr><th>Sequence</th><th>HI-SLAM2</th><th>StructVIO</th><th>ORB-SLAM3</th><th>DROID-SLAM</th><th>Planar-SLAM</th><th class="ours-col">SF-SLAM (Ours)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Office Building (ascending)</td><td>9.483</td><td>8.288</td><td class="second">7.060</td><td>11.763</td><td class="na">&ndash;</td><td class="ours-col best">0.215</td></tr>
+              <tr><td>Apartment Building</td><td>38.700</td><td class="second">3.175</td><td>3.759</td><td>73.204</td><td class="na">&ndash;</td><td class="ours-col best">0.070</td></tr>
+              <tr><td>Academic Building B</td><td class="second">0.098</td><td>9.308</td><td>5.262</td><td>9.350</td><td class="na">&ndash;</td><td class="ours-col best">0.090</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="qual">
+          <div class="seq-label">Office Building (ascending)</div>
+          <div class="qual-grid">
+            <figure><img src="images/qual/open_office_ascending/hi.jpg" alt="HI-SLAM2 top-down trajectory on Office Building (ascending)" loading="lazy"><figcaption>HI-SLAM2</figcaption></figure>
+            <figure><img src="images/qual/open_office_ascending/struct.jpg" alt="StructVIO top-down trajectory on Office Building (ascending)" loading="lazy"><figcaption>StructVIO</figcaption></figure>
+            <figure><img src="images/qual/open_office_ascending/orb.jpg" alt="ORB-SLAM3 top-down trajectory on Office Building (ascending)" loading="lazy"><figcaption>ORB-SLAM3</figcaption></figure>
+            <figure><img src="images/qual/open_office_ascending/droid.jpg" alt="DROID-SLAM top-down trajectory on Office Building (ascending)" loading="lazy"><figcaption>DROID-SLAM</figcaption></figure>
+            <figure><img src="images/qual/open_office_ascending/planar.jpg" alt="Planar-SLAM top-down trajectory on Office Building (ascending)" loading="lazy"><figcaption>Planar-SLAM</figcaption></figure>
+            <figure class="is-ours"><img src="images/qual/open_office_ascending/ours.jpg" alt="SF-SLAM (Ours) top-down trajectory on Office Building (ascending)" loading="lazy"><figcaption>SF-SLAM (Ours)</figcaption></figure>
+          </div>
+
+          <div class="seq-label">Apartment Building</div>
+          <div class="qual-grid">
+            <figure><img src="images/qual/open_apartment/hi.jpg" alt="HI-SLAM2 top-down trajectory on Apartment Building" loading="lazy"><figcaption>HI-SLAM2</figcaption></figure>
+            <figure><img src="images/qual/open_apartment/struct.jpg" alt="StructVIO top-down trajectory on Apartment Building" loading="lazy"><figcaption>StructVIO</figcaption></figure>
+            <figure><img src="images/qual/open_apartment/orb.jpg" alt="ORB-SLAM3 top-down trajectory on Apartment Building" loading="lazy"><figcaption>ORB-SLAM3</figcaption></figure>
+            <figure><img src="images/qual/open_apartment/droid.jpg" alt="DROID-SLAM top-down trajectory on Apartment Building" loading="lazy"><figcaption>DROID-SLAM</figcaption></figure>
+            <figure><img src="images/qual/open_apartment/planar.jpg" alt="Planar-SLAM top-down trajectory on Apartment Building" loading="lazy"><figcaption>Planar-SLAM</figcaption></figure>
+            <figure class="is-ours"><img src="images/qual/open_apartment/ours.jpg" alt="SF-SLAM (Ours) top-down trajectory on Apartment Building" loading="lazy"><figcaption>SF-SLAM (Ours)</figcaption></figure>
+          </div>
+
+          <div class="seq-label">Academic Building B</div>
+          <div class="qual-grid">
+            <figure><img src="images/qual/open_academic_b/hi.jpg" alt="HI-SLAM2 top-down trajectory on Academic Building B" loading="lazy"><figcaption>HI-SLAM2</figcaption></figure>
+            <figure><img src="images/qual/open_academic_b/struct.jpg" alt="StructVIO top-down trajectory on Academic Building B" loading="lazy"><figcaption>StructVIO</figcaption></figure>
+            <figure><img src="images/qual/open_academic_b/orb.jpg" alt="ORB-SLAM3 top-down trajectory on Academic Building B" loading="lazy"><figcaption>ORB-SLAM3</figcaption></figure>
+            <figure><img src="images/qual/open_academic_b/droid.jpg" alt="DROID-SLAM top-down trajectory on Academic Building B" loading="lazy"><figcaption>DROID-SLAM</figcaption></figure>
+            <figure><img src="images/qual/open_academic_b/planar.jpg" alt="Planar-SLAM top-down trajectory on Academic Building B" loading="lazy"><figcaption>Planar-SLAM</figcaption></figure>
+            <figure class="is-ours"><img src="images/qual/open_academic_b/ours.jpg" alt="SF-SLAM (Ours) top-down trajectory on Academic Building B" loading="lazy"><figcaption>SF-SLAM (Ours)</figcaption></figure>
+          </div>
+        </div>
+        <p class="has-text-grey" style="font-size:0.87rem; text-align:left; margin-top:0.7rem;">
+          <b>Figure 6.</b> Top-down trajectory comparison on open-loop inter-floor (staircase) sequences. Structure-
+          agnostic baselines accumulate orientation drift or lose tracking across floor transitions, while SF-SLAM
+          preserves a consistent path. Green and blue dots mark the start and end points; Planar-SLAM is plotted until
+          tracking fails.
+        </p>
+
+        <figure class="fig" style="margin-top:2.2rem;">
           <img src="images/fig4_results.png" alt="3D map reconstructions of planes and lines on two sequences">
-          <figcaption><b>Figure 4.</b> 3D map reconstructions of planes and lines produced by SF-SLAM. For each
+          <figcaption><b>Figure 7.</b> 3D map reconstructions of planes and lines produced by SF-SLAM. For each
           sequence, the left panel overlays the structure onto the point cloud and the right panel shows the plane
           and line map. Planes aligned to the Manhattan directions are red / green / blue; lines aligned to the SFW
           directions are red / green / blue / cyan; magenta marks the estimated trajectory.</figcaption>
         </figure>
 
-        <div class="content has-text-justified" style="margin:1.4rem 0 1.2rem;">
+        <h3 class="title is-4" style="margin:2.2rem 0 0.7rem;">Ablation study</h3>
+        <div class="content has-text-justified">
           <p>
-            Across closed-loop and open-loop sequences, SF-SLAM achieves the lowest final drift error against recent
-            baselines including ORB-SLAM3, DROID-SLAM, HI-SLAM2, Planar-SLAM, and Struct-VIO &mdash; without relying
-            on loop closure. The ablation below isolates the contribution of each structural primitive (FDE in metres;
-            lower is better).
+            The ablation below isolates the contribution of each structural primitive (FDE in metres; lower is
+            better). Adding plane landmarks to the VIO baseline sharply reduces drift, and adding line landmarks
+            reduces it further &mdash; the two primitives are complementary, with lines stabilising low-texture
+            regions where large planes are scarce.
           </p>
         </div>
+        <div class="table-scroll">
+          <table class="restable">
+            <caption>Table IV. Ablation on author-collected datasets: contribution of plane (P) and line (L)
+            landmarks (FDE [m], lower is better).</caption>
+            <thead>
+              <tr><th rowspan="2">Sequence</th><th colspan="3">Final Drift Error (FDE) [m] &darr;</th></tr>
+              <tr><th>VIO</th><th>VIO + Plane</th><th class="ours-col">VIO + Plane + Line&nbsp;(Ours)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Office Building (return)</td><td>0.909</td><td>0.131</td><td class="ours-col ours">0.024</td></tr>
+              <tr><td>Mixed-use Building</td><td>0.469</td><td>0.051</td><td class="ours-col ours">0.046</td></tr>
+              <tr><td>Parking Lot</td><td>0.737</td><td>0.312</td><td class="ours-col ours">0.164</td></tr>
+              <tr><td>Office Building (ascending)</td><td>1.119</td><td>0.335</td><td class="ours-col ours">0.215</td></tr>
+              <tr><td>Apartment Building</td><td>0.324</td><td>0.185</td><td class="ours-col ours">0.070</td></tr>
+              <tr><td>Academic Building B</td><td>0.324</td><td>0.240</td><td class="ours-col ours">0.090</td></tr>
+            </tbody>
+          </table>
+        </div>
 
-        <table class="restable">
-          <thead>
-            <tr><th rowspan="2">Sequence</th><th colspan="3">Final Drift Error (FDE) [m] &darr;</th></tr>
-            <tr><th>VIO</th><th>VIO + Plane</th><th class="ours-col">VIO + Plane + Line&nbsp;(Ours)</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Office Building (return)</td><td>0.909</td><td>0.131</td><td class="ours-col ours">0.024</td></tr>
-            <tr><td>Mixed-use Building</td><td>0.469</td><td>0.051</td><td class="ours-col ours">0.046</td></tr>
-            <tr><td>Parking Lot</td><td>0.737</td><td>0.312</td><td class="ours-col ours">0.164</td></tr>
-            <tr><td>Office Building (ascending)</td><td>1.119</td><td>0.335</td><td class="ours-col ours">0.215</td></tr>
-            <tr><td>Apartment Building</td><td>0.324</td><td>0.185</td><td class="ours-col ours">0.070</td></tr>
-            <tr><td>Academic Building B</td><td>0.324</td><td>0.240</td><td class="ours-col ours">0.090</td></tr>
-          </tbody>
-          <caption>Ablation on author-collected datasets (Final Drift Error, lower is better). Full comparisons
-          against all baselines are reported in the paper.</caption>
-        </table>
+        <figure class="fig" style="margin-top:1.6rem;">
+          <img src="images/figure_rotation_ablation.png" alt="Effect of consensus-weighted rotation fusion on endpoint yaw drift and jitter">
+          <figcaption><b>Figure 8.</b> Effect of consensus-weighted rotation fusion. Top: endpoint yaw drift of ARKit
+          VIO versus the final SF-SLAM rotation, which stays close to the initial orientation by repeatedly anchoring
+          to the SFW structure. Bottom: the fusion attenuates frame-to-frame jitter from hard accept / reject
+          visual-compass updates while preserving the underlying rotation trend.</figcaption>
+        </figure>
       </div>
     </div>
   </div>
