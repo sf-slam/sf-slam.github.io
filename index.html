@@ -26,6 +26,11 @@
     text-align:justify; color:#2a3038; max-width:840px; margin:1.7rem auto 0; }
   .tldr-line b { color:#363636; }
 
+  /* ---- teaser videos ---- */
+  .teaser-media { display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; max-width:760px; margin:0 auto; }
+  .teaser-media video { width:100%; height:auto; display:block; border:1px solid #e0e0e0; border-radius:8px; background:#000; }
+  @media (max-width:600px) { .teaser-media { grid-template-columns:1fr; } }
+
   .publication-video {
     position:relative; width:100%; height:0; padding-bottom:56.25%;
     overflow:hidden; border-radius:10px !important;
@@ -164,12 +169,17 @@
 <section class="hero teaser">
   <div class="container is-max-desktop">
     <div class="hero-body">
-      <figure class="fig">
-        <img src="images/fig1_teaser.png" alt="Accumulated 3D point cloud and structural map on a staircase sequence">
-        <figcaption><b>Figure 1.</b> Accumulated 3D point cloud rendered by back-projecting RGB-D images from the
-        estimated trajectory (left), with the corresponding structural map of planes and lines (right).
-        SF-SLAM overcomes cumulative drift in challenging stair scenes by leveraging structural regularities.</figcaption>
+      <figure class="fig" style="margin:0;">
+        <div class="teaser-media">
+          <video src="videos/teaser_clustered_lines.mp4" autoplay loop muted playsinline controls
+                 aria-label="SF-SLAM clustered structural lines on the Academic Building B staircase sequence"></video>
+          <video src="videos/teaser_normals.mp4" autoplay loop muted playsinline controls
+                 aria-label="SF-SLAM surface-normal estimation on the Academic Building B staircase sequence"></video>
+        </div>
+        <figcaption><b>Figure 1.</b> SF-SLAM running on the Academic Building B (staircase) sequence: clustered
+        structural lines (left) and estimated surface normals aligned to the San Francisco World (right).</figcaption>
       </figure>
+      <div class="has-text-centered"><span class="editme">Placeholder clips &mdash; to be replaced with the final teaser video.</span></div>
       <p class="tldr-line">
         <b>TL;DR:</b> Staircases and <b>inter-floor</b> transitions add slanted structure that breaks the Manhattan
         world and makes most structural SLAM drift. Using the <b>San Francisco World</b> (Manhattan triad + four
@@ -219,13 +229,6 @@
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
         <h2 class="title is-3">Method</h2>
-        <figure class="fig" style="max-width:720px; margin:0 auto 1.5rem;">
-          <img src="images/fig2_method.png" alt="Geometric intuition behind the San Francisco World">
-          <figcaption><b>Figure 2.</b> Geometric intuition behind SFW. Detected sloping lines (cyan) with the
-          Manhattan triad shown as RGB arrows (left). On the Gaussian sphere, each sloping line maps to a great
-          circle whose unit normal lies on one of four sloping dominant planes, symmetrically arranged around the
-          Manhattan triad with a single shared inclination (right).</figcaption>
-        </figure>
         <div class="content has-text-justified">
           <p>
             The <b>San Francisco world</b> extends the Manhattan triad with four sloping dominant directions that
@@ -242,7 +245,7 @@
         </div>
         <figure class="fig" style="margin-top:0.5rem;">
           <img src="images/figure_pipeline.png" alt="SF-SLAM system pipeline from RGB-D input to structural map">
-          <figcaption><b>Figure 3.</b> SF-SLAM system pipeline. From an RGB-D stream and ARKit VIO, a
+          <figcaption><b>Figure 2.</b> SF-SLAM system pipeline. From an RGB-D stream and ARKit VIO, a
           consensus-weighted rotation fusion combines the local VIO rotation with the drift-free SFW Visual Compass
           anchor; structure-aware landmark estimation then recovers MW-aligned planes via 1-point RANSAC and
           SFW-aligned lines via PCA. Every landmark reduces to a 1-D invariant coordinate, and a decoupled linear
@@ -261,7 +264,7 @@
         <h2 class="title is-3">SF-SLAM Dataset</h2>
         <figure class="fig">
           <img src="images/fig3_dataset.png" alt="Sample image sequences from the SF-SLAM dataset with line clustering">
-          <figcaption><b>Figure 4.</b> Sample frames from our dataset with line-clustering results from SF-SLAM,
+          <figcaption><b>Figure 3.</b> Sample frames from our dataset with line-clustering results from SF-SLAM,
           spanning indoor staircases, inter-floor transitions, and an outdoor scene.</figcaption>
         </figure>
         <div class="content has-text-justified" style="margin-top:1.3rem;">
@@ -364,7 +367,7 @@
           </div>
         </div>
         <p class="has-text-grey" style="font-size:0.87rem; text-align:left; margin-top:0.7rem;">
-          <b>Figure 5.</b> Top-down trajectory comparison on closed-loop sequences. Green and blue dots mark the start
+          <b>Figure 4.</b> Top-down trajectory comparison on closed-loop sequences. Green and blue dots mark the start
           and end points &mdash; a consistent closed loop returns the end point to the start. Planar-SLAM is plotted
           until tracking fails.
         </p>
@@ -416,7 +419,7 @@
           </div>
         </div>
         <p class="has-text-grey" style="font-size:0.87rem; text-align:left; margin-top:0.7rem;">
-          <b>Figure 6.</b> Top-down trajectory comparison on open-loop inter-floor (staircase) sequences. Structure-
+          <b>Figure 5.</b> Top-down trajectory comparison on open-loop inter-floor (staircase) sequences. Structure-
           agnostic baselines accumulate orientation drift or lose tracking across floor transitions, while SF-SLAM
           preserves a consistent path. Green and blue dots mark the start and end points; Planar-SLAM is plotted until
           tracking fails.
@@ -424,7 +427,7 @@
 
         <figure class="fig" style="margin-top:2.2rem;">
           <img src="images/fig4_results.png" alt="3D map reconstructions of planes and lines on two sequences">
-          <figcaption><b>Figure 7.</b> 3D map reconstructions of planes and lines produced by SF-SLAM. For each
+          <figcaption><b>Figure 6.</b> 3D map reconstructions of planes and lines produced by SF-SLAM. For each
           sequence, the left panel overlays the structure onto the point cloud and the right panel shows the plane
           and line map. Planes aligned to the Manhattan directions are red / green / blue; lines aligned to the SFW
           directions are red / green / blue / cyan; magenta marks the estimated trajectory.</figcaption>
@@ -460,7 +463,7 @@
 
         <figure class="fig" style="margin-top:1.6rem;">
           <img src="images/figure_rotation_ablation.png" alt="Effect of consensus-weighted rotation fusion on endpoint yaw drift and jitter">
-          <figcaption><b>Figure 8.</b> Effect of consensus-weighted rotation fusion. Top: endpoint yaw drift of ARKit
+          <figcaption><b>Figure 7.</b> Effect of consensus-weighted rotation fusion. Top: endpoint yaw drift of ARKit
           VIO versus the final SF-SLAM rotation, which stays close to the initial orientation by repeatedly anchoring
           to the SFW structure. Bottom: the fusion attenuates frame-to-frame jitter from hard accept / reject
           visual-compass updates while preserving the underlying rotation trend.</figcaption>
