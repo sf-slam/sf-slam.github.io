@@ -89,6 +89,13 @@
   @media (max-width:900px) { .qual-grid { grid-template-columns:repeat(3, 1fr); } }
   @media (max-width:520px) { .qual-grid { grid-template-columns:repeat(2, 1fr); } }
 
+  /* ---- rotation-fusion ablation figures ---- */
+  .ablation-figs { display:flex; flex-wrap:wrap; gap:1.2rem; justify-content:center; align-items:flex-start; margin-top:0.8rem; }
+  .ablation-figs figure { margin:0; max-width:240px; }
+  .ablation-figs img { width:100%; height:auto; display:block; border:1px solid #e0e0e0; background:#fff; }
+  .ablation-figs figcaption { font-size:0.82rem; color:#7a7a7a; margin-top:0.4rem; line-height:1.4; text-align:center; }
+  @media (max-width:780px) { .ablation-figs figure { max-width:430px; } }
+
   pre code { font-size:0.9rem; }
 
   .editme {
@@ -461,13 +468,34 @@
           </table>
         </div>
 
-        <figure class="fig" style="margin-top:1.6rem;">
-          <img src="images/figure_rotation_ablation.png" alt="Effect of consensus-weighted rotation fusion on endpoint yaw drift and jitter">
-          <figcaption><b>Figure 7.</b> Effect of consensus-weighted rotation fusion. Top: endpoint yaw drift of ARKit
-          VIO versus the final SF-SLAM rotation, which stays close to the initial orientation by repeatedly anchoring
-          to the SFW structure. Bottom: the fusion attenuates frame-to-frame jitter from hard accept / reject
-          visual-compass updates while preserving the underlying rotation trend.</figcaption>
-        </figure>
+        <div class="content has-text-justified" style="margin-top:1.9rem;">
+          <p>
+            A separate ablation isolates the <b>consensus-weighted rotation fusion</b>, which blends the locally
+            smooth VIO rotation with the drift-free but intermittently unreliable SFW Visual Compass anchor.
+          </p>
+        </div>
+        <div class="ablation-figs">
+          <figure>
+            <img src="images/ablation_drift.png" alt="Endpoint yaw drift of ARKit VIO vs SF-SLAM across three sequences" loading="lazy">
+            <figcaption>(a) Endpoint yaw drift &mdash; SF-SLAM ends 0.6&ndash;2.3&deg; from its initial heading versus
+            10.7&ndash;13.5&deg; for ARKit VIO (5.8&ndash;19.7&times; lower).</figcaption>
+          </figure>
+          <figure>
+            <img src="images/ablation_jitter.png" alt="Frame-to-frame yaw jitter, hard accept/reject vs SF-SLAM" loading="lazy">
+            <figcaption>(b) Frame-to-frame jitter &mdash; geodesic weighting (capped at 0.25) attenuates per-frame yaw
+            noise 2.4&ndash;9.2&times; versus hard accept / reject.</figcaption>
+          </figure>
+          <figure>
+            <img src="images/ablation_robustness.png" alt="Response to a 32.2-degree injected structural fault with consensus gating" loading="lazy">
+            <figcaption>(c) Consensus robustness &mdash; under a 32.2&deg; injected structural fault the consensus score
+            drops below threshold and the measurement is refused, holding displacement under 6&deg; while a
+            consensus-blind variant follows the full fault.</figcaption>
+          </figure>
+        </div>
+        <p class="has-text-grey" style="font-size:0.87rem; text-align:left; margin-top:0.7rem;">
+          <b>Figure 7.</b> Rotation-fusion ablation on author-collected sequences: (a) endpoint yaw-drift reduction,
+          (b) per-frame jitter attenuation, and (c) robustness to an injected structural fault via consensus gating.
+        </p>
       </div>
     </div>
   </div>
