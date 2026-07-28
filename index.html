@@ -89,6 +89,13 @@
   @media (max-width:900px) { .qual-grid { grid-template-columns:repeat(3, 1fr); } }
   @media (max-width:520px) { .qual-grid { grid-template-columns:repeat(2, 1fr); } }
 
+  /* ---- rotation-fusion ablation figures ---- */
+  .ablation-figs { display:flex; flex-wrap:wrap; gap:1.2rem; justify-content:center; align-items:flex-start; margin-top:0.8rem; }
+  .ablation-figs figure { margin:0; max-width:240px; }
+  .ablation-figs img { width:100%; height:auto; display:block; border:1px solid #e0e0e0; background:#fff; }
+  .ablation-figs figcaption { font-size:0.82rem; color:#7a7a7a; margin-top:0.4rem; line-height:1.4; text-align:center; }
+  @media (max-width:780px) { .ablation-figs figure { max-width:430px; } }
+
   pre code { font-size:0.9rem; }
 
   .editme {
@@ -289,7 +296,7 @@
               <tr><td colspan="3" style="text-align:left; font-style:italic; background:#efefef; color:#4a4a4a;">Closed-loop sequences</td></tr>
               <tr><td>Office Building (return)</td><td>376.996</td><td>12.605</td></tr>
               <tr><td>Mixed-use Building</td><td>72.671</td><td>2.146</td></tr>
-              <tr><td>Academic Building A</td><td>119.623</td><td class="na">&ndash;</td></tr>
+              <tr><td>Academic Building A</td><td>119.623</td><td>3.730</td></tr>
               <tr><td>Parking Lot</td><td>164.596</td><td>2.934</td></tr>
               <tr><td colspan="3" style="text-align:left; font-style:italic; background:#efefef; color:#4a4a4a;">Open-loop sequences</td></tr>
               <tr><td>Office Building (ascending)</td><td>205.581</td><td>6.475</td></tr>
@@ -328,9 +335,10 @@
               <tr><th>Sequence</th><th>HI-SLAM2</th><th>StructVIO</th><th>ORB-SLAM3</th><th>DROID-SLAM</th><th>Planar-SLAM</th><th class="ours-col">SF-SLAM (Ours)</th></tr>
             </thead>
             <tbody>
-              <tr><td>Office Building (return)</td><td>42.040</td><td>11.384</td><td class="second">0.201</td><td>21.330</td><td class="na">&ndash;</td><td class="ours-col best">0.024</td></tr>
-              <tr><td>Mixed-use Building</td><td>10.186</td><td class="second">2.192</td><td>11.276</td><td>3.435</td><td class="na">&ndash;</td><td class="ours-col best">0.046</td></tr>
-              <tr><td>Parking Lot</td><td>6.913</td><td>7.180</td><td class="best">0.012</td><td>4.123</td><td class="second">0.036</td><td class="ours-col">0.164</td></tr>
+              <tr><td>Office Building (return)</td><td>42.040</td><td>10.296</td><td class="second">0.201</td><td>21.330</td><td class="na">&ndash;</td><td class="ours-col best">0.024</td></tr>
+              <tr><td>Mixed-use Building</td><td>10.186</td><td class="second">1.395</td><td>11.276</td><td>3.435</td><td class="na">&ndash;</td><td class="ours-col best">0.046</td></tr>
+              <tr><td>Academic Building A</td><td>13.112</td><td>1.129</td><td class="second">0.218</td><td>0.264</td><td>10.568</td><td class="ours-col best">0.089</td></tr>
+              <tr><td>Parking Lot</td><td>6.913</td><td>7.847</td><td class="best">0.012</td><td>4.123</td><td class="second">0.036</td><td class="ours-col">0.164</td></tr>
             </tbody>
           </table>
         </div>
@@ -354,6 +362,16 @@
             <figure><img src="images/qual/closed_mixed_use/droid.jpg" alt="DROID-SLAM top-down trajectory on Mixed-use Building" loading="lazy"><figcaption>DROID-SLAM</figcaption></figure>
             <figure><img src="images/qual/closed_mixed_use/planar.jpg" alt="Planar-SLAM top-down trajectory on Mixed-use Building" loading="lazy"><figcaption>Planar-SLAM</figcaption></figure>
             <figure class="is-ours"><img src="images/qual/closed_mixed_use/ours.jpg" alt="SF-SLAM (Ours) top-down trajectory on Mixed-use Building" loading="lazy"><figcaption>SF-SLAM (Ours)</figcaption></figure>
+          </div>
+
+          <div class="seq-label">Academic Building A</div>
+          <div class="qual-grid">
+            <figure><img src="images/qual/closed_academic_a/hi.jpg" alt="HI-SLAM2 top-down trajectory on Academic Building A" loading="lazy"><figcaption>HI-SLAM2</figcaption></figure>
+            <figure><img src="images/qual/closed_academic_a/struct.jpg" alt="StructVIO top-down trajectory on Academic Building A" loading="lazy"><figcaption>StructVIO</figcaption></figure>
+            <figure><img src="images/qual/closed_academic_a/orb.jpg" alt="ORB-SLAM3 top-down trajectory on Academic Building A" loading="lazy"><figcaption>ORB-SLAM3</figcaption></figure>
+            <figure><img src="images/qual/closed_academic_a/droid.jpg" alt="DROID-SLAM top-down trajectory on Academic Building A" loading="lazy"><figcaption>DROID-SLAM</figcaption></figure>
+            <figure><img src="images/qual/closed_academic_a/planar.jpg" alt="Planar-SLAM top-down trajectory on Academic Building A" loading="lazy"><figcaption>Planar-SLAM</figcaption></figure>
+            <figure class="is-ours"><img src="images/qual/closed_academic_a/ours.jpg" alt="SF-SLAM (Ours) top-down trajectory on Academic Building A" loading="lazy"><figcaption>SF-SLAM (Ours)</figcaption></figure>
           </div>
 
           <div class="seq-label">Parking Lot (outdoor)</div>
@@ -380,9 +398,9 @@
               <tr><th>Sequence</th><th>HI-SLAM2</th><th>StructVIO</th><th>ORB-SLAM3</th><th>DROID-SLAM</th><th>Planar-SLAM</th><th class="ours-col">SF-SLAM (Ours)</th></tr>
             </thead>
             <tbody>
-              <tr><td>Office Building (ascending)</td><td>9.483</td><td>8.288</td><td class="second">7.060</td><td>11.763</td><td class="na">&ndash;</td><td class="ours-col best">0.215</td></tr>
-              <tr><td>Apartment Building</td><td>38.700</td><td class="second">3.175</td><td>3.759</td><td>73.204</td><td class="na">&ndash;</td><td class="ours-col best">0.070</td></tr>
-              <tr><td>Academic Building B</td><td class="second">0.098</td><td>9.308</td><td>5.262</td><td>9.350</td><td class="na">&ndash;</td><td class="ours-col best">0.090</td></tr>
+              <tr><td>Office Building (ascending)</td><td>34.146</td><td>5.254</td><td class="second">7.060</td><td>11.763</td><td class="na">&ndash;</td><td class="ours-col best">0.215</td></tr>
+              <tr><td>Apartment Building</td><td>38.700</td><td>4.065</td><td class="second">3.759</td><td>73.204</td><td class="na">&ndash;</td><td class="ours-col best">0.070</td></tr>
+              <tr><td>Academic Building B</td><td class="second">0.098</td><td>7.631</td><td>5.262</td><td>9.350</td><td class="na">&ndash;</td><td class="ours-col best">0.090</td></tr>
             </tbody>
           </table>
         </div>
@@ -453,6 +471,7 @@
             <tbody>
               <tr><td>Office Building (return)</td><td>0.909</td><td>0.131</td><td class="ours-col ours">0.024</td></tr>
               <tr><td>Mixed-use Building</td><td>0.469</td><td>0.051</td><td class="ours-col ours">0.046</td></tr>
+              <tr><td>Academic Building A</td><td>0.549</td><td>0.840</td><td class="ours-col ours">0.089</td></tr>
               <tr><td>Parking Lot</td><td>0.737</td><td>0.312</td><td class="ours-col ours">0.164</td></tr>
               <tr><td>Office Building (ascending)</td><td>1.119</td><td>0.335</td><td class="ours-col ours">0.215</td></tr>
               <tr><td>Apartment Building</td><td>0.324</td><td>0.185</td><td class="ours-col ours">0.070</td></tr>
@@ -461,13 +480,34 @@
           </table>
         </div>
 
-        <figure class="fig" style="margin-top:1.6rem;">
-          <img src="images/figure_rotation_ablation.png" alt="Effect of consensus-weighted rotation fusion on endpoint yaw drift and jitter">
-          <figcaption><b>Figure 7.</b> Effect of consensus-weighted rotation fusion. Top: endpoint yaw drift of ARKit
-          VIO versus the final SF-SLAM rotation, which stays close to the initial orientation by repeatedly anchoring
-          to the SFW structure. Bottom: the fusion attenuates frame-to-frame jitter from hard accept / reject
-          visual-compass updates while preserving the underlying rotation trend.</figcaption>
-        </figure>
+        <div class="content has-text-justified" style="margin-top:1.9rem;">
+          <p>
+            A separate ablation isolates the <b>consensus-weighted rotation fusion</b>, which blends the locally
+            smooth VIO rotation with the drift-free but intermittently unreliable SFW Visual Compass anchor.
+          </p>
+        </div>
+        <div class="ablation-figs">
+          <figure>
+            <img src="images/ablation_drift.png" alt="Endpoint yaw drift of ARKit VIO vs SF-SLAM across three sequences" loading="lazy">
+            <figcaption>(a) Endpoint yaw drift &mdash; SF-SLAM ends 0.6&ndash;2.3&deg; from its initial heading versus
+            10.7&ndash;13.5&deg; for ARKit VIO (roughly 6&ndash;18&times; lower).</figcaption>
+          </figure>
+          <figure>
+            <img src="images/ablation_jitter.png" alt="Frame-to-frame yaw jitter, hard accept/reject vs SF-SLAM" loading="lazy">
+            <figcaption>(b) Frame-to-frame jitter &mdash; geodesic fusion attenuates per-frame yaw noise
+            (&sigma;<sub>&Delta;&psi;</sub> from 1.28&deg;&rarr;0.22&deg; and 0.49&deg;&rarr;0.05&deg;) versus hard accept / reject.</figcaption>
+          </figure>
+          <figure>
+            <img src="images/ablation_robustness.png" alt="Response to a 32.2-degree injected structural fault with consensus gating" loading="lazy">
+            <figcaption>(c) Consensus robustness &mdash; under a 32.2&deg; injected structural fault the consensus score
+            drops below threshold and the measurement is refused, holding displacement under 6&deg; while a
+            consensus-blind variant follows the full fault.</figcaption>
+          </figure>
+        </div>
+        <p class="has-text-grey" style="font-size:0.87rem; text-align:left; margin-top:0.7rem;">
+          <b>Figure 7.</b> Rotation-fusion ablation on author-collected sequences: (a) endpoint yaw-drift reduction,
+          (b) per-frame jitter attenuation, and (c) robustness to an injected structural fault via consensus gating.
+        </p>
       </div>
     </div>
   </div>
