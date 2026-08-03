@@ -89,13 +89,6 @@
   @media (max-width:900px) { .qual-grid { grid-template-columns:repeat(3, 1fr); } }
   @media (max-width:520px) { .qual-grid { grid-template-columns:repeat(2, 1fr); } }
 
-  /* ---- rotation-fusion ablation figures ---- */
-  .ablation-figs { display:flex; flex-wrap:wrap; gap:1.2rem; justify-content:center; align-items:flex-start; margin-top:0.8rem; }
-  .ablation-figs figure { margin:0; max-width:240px; }
-  .ablation-figs img { width:100%; height:auto; display:block; border:1px solid #e0e0e0; background:#fff; }
-  .ablation-figs figcaption { font-size:0.82rem; color:#7a7a7a; margin-top:0.4rem; line-height:1.4; text-align:center; }
-  @media (max-width:780px) { .ablation-figs figure { max-width:430px; } }
-
   pre code { font-size:0.9rem; }
 
   .editme {
@@ -184,7 +177,7 @@
                  aria-label="SF-SLAM surface-normal estimation on the Academic Building B staircase sequence"></video>
         </div>
         <figcaption><b>Figure 1.</b> SF-SLAM running on the Academic Building B (staircase) sequence: clustered
-        structural lines (left) and estimated surface normals aligned to the San Francisco World (right).</figcaption>
+        structural lines (left) and estimated surface normals (right).</figcaption>
       </figure>
       <div class="has-text-centered"><span class="editme">Placeholder clips &mdash; to be replaced with the final teaser video.</span></div>
       <p class="tldr-line">
@@ -290,18 +283,18 @@
           <table class="restable">
             <caption>Table I. Statistics of the author-collected dataset.</caption>
             <thead>
-              <tr><th>Sequence</th><th>Trajectory Length [m]</th><th>Angular Travel [10<sup>3</sup>&nbsp;&deg;]</th></tr>
+              <tr><th>Sequence</th><th>Frames</th><th>Trajectory Length [m]</th><th>Angular Travel [10<sup>3</sup>&nbsp;&deg;]</th></tr>
             </thead>
             <tbody>
-              <tr><td colspan="3" style="text-align:left; font-style:italic; background:#efefef; color:#4a4a4a;">Closed-loop sequences</td></tr>
-              <tr><td>Office Building (return)</td><td>376.996</td><td>12.605</td></tr>
-              <tr><td>Mixed-use Building</td><td>72.671</td><td>2.146</td></tr>
-              <tr><td>Academic Building A</td><td>119.623</td><td>3.730</td></tr>
-              <tr><td>Parking Lot</td><td>164.596</td><td>2.934</td></tr>
-              <tr><td colspan="3" style="text-align:left; font-style:italic; background:#efefef; color:#4a4a4a;">Open-loop sequences</td></tr>
-              <tr><td>Office Building (ascending)</td><td>205.581</td><td>6.475</td></tr>
-              <tr><td>Apartment Building</td><td>488.302</td><td>17.898</td></tr>
-              <tr><td>Academic Building B</td><td>107.625</td><td>4.510</td></tr>
+              <tr><td colspan="4" style="text-align:left; font-style:italic; background:#efefef; color:#4a4a4a;">Closed-loop sequences</td></tr>
+              <tr><td>Office Building (return)</td><td>9330</td><td>376.996</td><td>12.605</td></tr>
+              <tr><td>Mixed-use Building</td><td>6455</td><td>72.671</td><td>2.146</td></tr>
+              <tr><td>Academic Building A</td><td>2857</td><td>119.623</td><td>3.730</td></tr>
+              <tr><td>Parking Lot</td><td>3185</td><td>164.596</td><td>2.934</td></tr>
+              <tr><td colspan="4" style="text-align:left; font-style:italic; background:#efefef; color:#4a4a4a;">Open-loop sequences</td></tr>
+              <tr><td>Office Building (ascending)</td><td>4990</td><td>205.581</td><td>6.475</td></tr>
+              <tr><td>Apartment Building</td><td>12240</td><td>488.302</td><td>17.898</td></tr>
+              <tr><td>Academic Building B</td><td>3471</td><td>107.625</td><td>4.510</td></tr>
             </tbody>
           </table>
         </div>
@@ -479,35 +472,6 @@
             </tbody>
           </table>
         </div>
-
-        <div class="content has-text-justified" style="margin-top:1.9rem;">
-          <p>
-            A separate ablation isolates the <b>consensus-weighted rotation fusion</b>, which blends the locally
-            smooth VIO rotation with the drift-free but intermittently unreliable SFW Visual Compass anchor.
-          </p>
-        </div>
-        <div class="ablation-figs">
-          <figure>
-            <img src="images/ablation_drift.png" alt="Endpoint yaw drift of ARKit VIO vs SF-SLAM across three sequences" loading="lazy">
-            <figcaption>(a) Endpoint yaw drift &mdash; SF-SLAM ends 0.6&ndash;2.3&deg; from its initial heading versus
-            10.7&ndash;13.5&deg; for ARKit VIO (roughly 6&ndash;18&times; lower).</figcaption>
-          </figure>
-          <figure>
-            <img src="images/ablation_jitter.png" alt="Frame-to-frame yaw jitter, hard accept/reject vs SF-SLAM" loading="lazy">
-            <figcaption>(b) Frame-to-frame jitter &mdash; geodesic fusion attenuates per-frame yaw noise
-            (&sigma;<sub>&Delta;&psi;</sub> from 1.28&deg;&rarr;0.22&deg; and 0.49&deg;&rarr;0.05&deg;) versus hard accept / reject.</figcaption>
-          </figure>
-          <figure>
-            <img src="images/ablation_robustness.png" alt="Response to a 32.2-degree injected structural fault with consensus gating" loading="lazy">
-            <figcaption>(c) Consensus robustness &mdash; under a 32.2&deg; injected structural fault the consensus score
-            drops below threshold and the measurement is refused, holding displacement under 6&deg; while a
-            consensus-blind variant follows the full fault.</figcaption>
-          </figure>
-        </div>
-        <p class="has-text-grey" style="font-size:0.87rem; text-align:left; margin-top:0.7rem;">
-          <b>Figure 7.</b> Rotation-fusion ablation on author-collected sequences: (a) endpoint yaw-drift reduction,
-          (b) per-frame jitter attenuation, and (c) robustness to an injected structural fault via consensus gating.
-        </p>
       </div>
     </div>
   </div>
