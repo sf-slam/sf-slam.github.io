@@ -182,8 +182,8 @@
       <div class="has-text-centered"><span class="editme">Placeholder clips &mdash; to be replaced with the final teaser video.</span></div>
       <p class="tldr-line">
         <b>TL;DR:</b> Staircases and <b>inter-floor</b> transitions add slanted structure that breaks the Manhattan
-        world and makes most structural SLAM drift. Using the <b>San Francisco World</b> (Manhattan triad + four
-        equally inclined slope directions), SF-SLAM fixes a drift-free rotation and turns planes and slanted lines
+        world and makes most structural SLAM drift. Using the <b>San Francisco world</b> (Manhattan triad + four
+        equally inclined slope directions), SF-SLAM anchors a drift-free rotation and turns planes and slanted lines
         into 1-D coordinates, extending efficient linear-Kalman-filter SLAM from <b>intra-floor</b> to inter-floor
         scenes.
       </p>
@@ -205,17 +205,15 @@
             ambiguity cause cumulative trajectory drift and tracking loss. These failures become more severe in
             staircases and inter-floor spaces, where repeated layouts and slanted structures fall outside the
             assumptions of the Manhattan world.
-          </p>
-          <p>
             To address these problems, we detect planes and lines to build a reliable global
             <b>San Francisco world (SFW)</b> map while simultaneously estimating 6-DoF camera poses, capturing
             structural regularities beyond orthogonal layouts. We decouple rotation and translation using
             structure-consistent absolute rotation estimates and represent structural landmarks with compact,
             structure-aligned parameters. This formulation streamlines state estimation and enables robust camera
             pose tracking and global structural mapping. Our approach jointly leverages both inter-floor planar and
-            line regularities to preserve trajectory consistency where existing methods fail, effectively reducing
-            accumulated drift during inter-floor transitions and outperforming state-of-the-art SLAM methods in
-            challenging real-world environments.
+            line regularities to preserve trajectory consistency in environments where existing methods often fail.
+            In experiments across various SFW scenes, our approach reduces accumulated drift during inter-floor
+            transitions and outperforms state-of-the-art SLAM methods in challenging real-world environments.
           </p>
         </div>
       </div>
@@ -233,14 +231,15 @@
           <p>
             The <b>San Francisco world</b> extends the Manhattan triad with four sloping dominant directions that
             share a common inclination, so the entire frame is fixed by just 4 degrees of freedom. SF-SLAM exploits
-            this structure in three stages. A <b>graph-based rotation fusion</b> combines locally accurate ARKit
-            motion with a drift-free <b>SFW Visual Compass</b> anchor, gated online by a mutual-consensus weight so
-            the anchor gracefully fades out when it becomes unreliable. MW-aligned planes are then refined to a single
+            this structure in three stages. A <b>consensus-weighted rotation fusion</b> combines the locally accurate
+            VIO rotation with a drift-free <b>SFW Visual Compass</b> anchor, gated online by a <b>long-baseline
+            consensus</b> test: inconsistent compass estimates are rejected outright (reverting to pure VIO), while
+            accepted ones are down-weighted by their consensus score. MW-aligned planes are then refined to a single
             offset value via a <b>1-point RANSAC</b>, while SFW-aligned lines are recovered through PCA on sampled
-            3-D points and classified as orthogonal or slanted. Because rotation is removed from the state and every
-            landmark reduces to a <b>1-D invariant coordinate</b>, the measurement models become strictly linear in
-            the camera translation, yielding a single decoupled <b>linear Kalman filter</b> with no Jacobians and no
-            accumulated linearization error.
+            3-D points and classified as orthogonal or slanted. Because rotation is removed from the state and each
+            structural constraint reduces to a <b>1-D invariant coordinate</b>, the measurement models become strictly
+            linear in the camera translation, yielding a single decoupled <b>linear Kalman filter</b> with no
+            Jacobians and no accumulated linearization error.
           </p>
         </div>
         <figure class="fig" style="margin-top:0.5rem;">
@@ -248,7 +247,7 @@
           <figcaption><b>Figure 2.</b> SF-SLAM system pipeline. From an RGB-D stream and ARKit VIO, a
           consensus-weighted rotation fusion combines the local VIO rotation with the drift-free SFW Visual Compass
           anchor; structure-aware landmark estimation then recovers MW-aligned planes via 1-point RANSAC and
-          SFW-aligned lines via PCA. Every landmark reduces to a 1-D invariant coordinate, and a decoupled linear
+          SFW-aligned lines via PCA. Each structural constraint reduces to a 1-D invariant coordinate, and a decoupled linear
           Kalman filter jointly estimates the camera translation and the structural map.</figcaption>
         </figure>
       </div>
@@ -269,10 +268,10 @@
         </figure>
         <div class="content has-text-justified" style="margin-top:1.3rem;">
           <p>
-            Existing SLAM benchmarks do not reflect the structural characteristics required for the San Francisco
-            world assumption, so we collected a custom dataset with an <b>iPhone 15 Pro Max</b> and the Stray Scanner
-            application. It provides RGB and depth streams (1920&times;1440 and 256&times;192, at 15&nbsp;Hz) together
-            with ARKit trajectories, covering large-scale buildings and an outdoor scene. The dataset comprises four
+            General-purpose RGB-D benchmarks are largely room-scale and lack the sustained inter-floor, sloped motion
+            that the San Francisco world targets, so we collected a custom dataset with an <b>iPhone 15 Pro Max</b>
+            and the Stray Scanner application. It records RGB-D sequences together with the corresponding ARKit
+            trajectories, covering large-scale buildings and an outdoor scene. The dataset comprises four
             <b>closed-loop</b> sequences, where the camera returns to its start for a reliable drift anchor, and three
             <b>open-loop</b> stair sequences that terminate at a landmark sharing the start's planar coordinates but
             differing in elevation.
@@ -281,7 +280,7 @@
 
         <div class="table-scroll">
           <table class="restable">
-            <caption>Table I. Statistics of the author-collected dataset.</caption>
+            <caption>Table I. Statistics of the SF-SLAM dataset.</caption>
             <thead>
               <tr><th>Sequence</th><th>Frames</th><th>Trajectory Length [m]</th><th>Angular Travel [10<sup>3</sup>&nbsp;&deg;]</th></tr>
             </thead>
@@ -312,9 +311,10 @@
 
         <div class="content has-text-justified">
           <p>
-            Across closed-loop and open-loop sequences, SF-SLAM achieves the lowest final drift error (FDE) against
-            recent baselines &mdash; HI-SLAM2, StructVIO, ORB-SLAM3, DROID-SLAM, and Planar-SLAM &mdash; without
-            relying on loop closure. Monocular baselines are Sim(3)-aligned to the ARKit reference before scoring.
+            Across closed-loop and open-loop sequences, SF-SLAM achieves the lowest final drift error (FDE) on nearly
+            every sequence against recent baselines &mdash; HI-SLAM2, StructVIO, ORB-SLAM3, DROID-SLAM, and
+            Planar-SLAM &mdash; without relying on loop closure (the exception is the Parking Lot, where a baseline's
+            loop closure snaps its endpoints together). Monocular baselines are Sim(3)-aligned to the ARKit reference before scoring.
             In every table, <b>best is bold</b> and <u>second-best is underlined</u>; &ldquo;&ndash;&rdquo; marks
             tracking failure or no reported result.
           </p>
@@ -448,14 +448,14 @@
         <div class="content has-text-justified">
           <p>
             The ablation below isolates the contribution of each structural primitive (FDE in metres; lower is
-            better). Adding plane landmarks to the VIO baseline sharply reduces drift, and adding line landmarks
-            reduces it further &mdash; the two primitives are complementary, with lines stabilising low-texture
-            regions where large planes are scarce.
+            better). Adding plane landmarks to the VIO baseline reduces drift on most sequences, and adding line
+            landmarks reduces it further on all of them &mdash; the two primitives are complementary, with lines
+            stabilising low-texture regions where large planes are scarce.
           </p>
         </div>
         <div class="table-scroll">
           <table class="restable">
-            <caption>Table IV. Ablation on author-collected datasets: contribution of plane (P) and line (L)
+            <caption>Table IV. Ablation on the SF-SLAM dataset: contribution of plane (P) and line (L)
             landmarks (FDE [m], lower is better).</caption>
             <thead>
               <tr><th rowspan="2">Sequence</th><th colspan="3">Final Drift Error (FDE) [m] &darr;</th></tr>
