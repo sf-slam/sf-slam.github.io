@@ -270,14 +270,20 @@
         </figure>
         <div class="content has-text-justified" style="margin-top:1.3rem;">
           <p>
-            General-purpose RGB-D benchmarks are largely room-scale and lack the sustained inter-floor, sloped motion
-            that the San Francisco world targets, so we collected a custom dataset with an <b>iPhone 15 Pro Max</b>
-            and the Stray Scanner application. It records RGB-D sequences together with the corresponding ARKit
-            trajectories, covering large-scale buildings and an outdoor scene. The dataset comprises four
-            <b>closed-loop</b> sequences, where the camera returns to its start for a reliable drift anchor, and three
-            <b>open-loop</b> stair sequences that terminate at a landmark sharing the start's planar coordinates but
-            differing in elevation.
+            General-purpose RGB-D benchmarks are largely confined to room-scale living-room and office scenes and do
+            not include sustained inter-floor motion. Our SF-SLAM dataset addresses this gap by providing long,
+            continuous RGB-D trajectories spanning multiple floors, with sustained motion through staircases and other
+            sloped structures. We capture it using an <b>iPhone 15 Pro Max</b> with the Stray Scanner application
+            across large-scale environments exhibiting diverse SFW structures, including staircases, ramps, and
+            inter-floor transitions. The application records RGB-D sequences along with the corresponding ARKit
+            trajectories. Our SF-SLAM dataset consists of two sequence types:
           </p>
+          <ul>
+            <li><b>Closed-loop sequences:</b> The camera returns to its starting position, which anchors the
+            accumulated drift measurement over long trajectories.</li>
+            <li><b>Open-loop sequences:</b> The camera climbs stairs and ends at a repeating structural corner several
+            stories above the starting point.</li>
+          </ul>
         </div>
 
         <div class="table-scroll">
