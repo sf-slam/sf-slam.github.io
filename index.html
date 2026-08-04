@@ -276,13 +276,17 @@
             sloped structures. We capture it using an <b>iPhone 15 Pro Max</b> with the Stray Scanner application
             across large-scale environments exhibiting diverse SFW structures, including staircases, ramps, and
             inter-floor transitions. The application records RGB-D sequences along with the corresponding ARKit
-            trajectories. Our SF-SLAM dataset consists of two sequence types:
+            trajectories. Table I summarizes the sequence statistics, where angular travel denotes the cumulative
+            rotational motion over each sequence and is reported in units of 10<sup>3</sup> degrees. Our SF-SLAM
+            dataset consists of two sequence types:
           </p>
           <ul>
             <li><b>Closed-loop sequences:</b> The camera returns to its starting position, which anchors the
-            accumulated drift measurement over long trajectories.</li>
+            accumulated drift measurement over long trajectories (leftmost column of Figure 3: the start and end
+            views coincide).</li>
             <li><b>Open-loop sequences:</b> The camera climbs stairs and ends at a repeating structural corner several
-            stories above the starting point.</li>
+            stories above the starting point (rightmost column of Figure 3: the start and end views show the same
+            corner on different stories).</li>
           </ul>
         </div>
 
