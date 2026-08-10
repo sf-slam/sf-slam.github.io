@@ -50,6 +50,9 @@
   }
   figure.fig figcaption b { color:#363636; }
 
+  /* ---- narrower stand-alone figures (method diagrams) ---- */
+  figure.fig.is-narrow > img { max-width:640px; margin:0 auto; }
+
   /* ---- small image grids (dataset thumbs) ---- */
   .img-grid { display:grid; gap:0.5rem; margin-top:0.7rem; align-items:start; }
   .img-grid.cols3 { grid-template-columns:repeat(3, 1fr); }
@@ -252,8 +255,40 @@
           detects image lines and estimates depth-based surface normals. The consensus-weighted rotation fusion module
           obtains the absolute-rotation estimate from the SFW Visual Compass using a single line and a tracked plane
           normal, and fuses it with the VIO prediction using long-baseline consensus. The fused rotation guides
-          MW-aligned plane and SFW-aligned line estimation, while the linear KF combines the resulting structural
-          measurements with VIO translation to estimate the camera translation and global structural map.</figcaption>
+          MW-aligned plane and SFW-aligned line estimation and directly provides the rotational component of the
+          estimated pose, while the linear Kalman filter combines the resulting structural measurements with the
+          VIO translation to estimate the camera translation and the global structural map.</figcaption>
+        </figure>
+
+        <div class="content has-text-justified" style="margin-top:1.9rem;">
+          <p>
+            The compass is an <i>absolute</i> reference, but it is not always trustworthy: a lone line parallel to the
+            dominant plane adds no independent constraint, a vanishing-point assignment can be ambiguous, reflective
+            surfaces and moving doors remove the tracked plane, and the estimated inclination can disagree across
+            lines. Rather than gating each frame on its own residual &mdash; which cannot separate a
+            fraction-of-a-degree bias from ordinary VIO noise &mdash; SF-SLAM scores every compass estimate against an
+            <b>anchor buffer</b> of the seven most recent accepted frames, spaced at least 100 frames apart, so the
+            agreement is always measured over a baseline of at least 600 frames.
+          </p>
+        </div>
+        <figure class="fig">
+          <img src="images/figure_compass_failures.png" alt="Four representative failure modes of the SFW Visual Compass" loading="lazy">
+          <figcaption><b>Figure 3.</b> Representative failure modes of the SFW Visual Compass. (a) Only a single
+          unreliable line (yellow) is detected, and it is parallel to the dominant plane (red), contributing no
+          rotation constraint independent of the plane. (b) The red line segment is horizontal but, absent image
+          context, geometrically indistinguishable from the vertical direction, leaving its vanishing-point
+          assignment ambiguous. (c) Reflective surfaces corrupt the depth measurements and transient door motion
+          temporarily removes the tracked dominant plane. (d) The estimated inclination angle is inconsistent across
+          the detected lines.</figcaption>
+        </figure>
+
+        <figure class="fig is-narrow" style="margin-top:2rem;">
+          <img src="images/figure_consensus.png" alt="Long-baseline consensus scoring and consensus-gated geodesic fusion" loading="lazy">
+          <figcaption><b>Figure 4.</b> Long-baseline consensus test and geodesic fusion. (a) The relative-rotation
+          disagreement between VIO and the SFW Visual Compass is evaluated over the anchor buffer (consecutive anchors
+          at least &delta; frames apart) and aggregated into a consensus score. (b) When the visual-compass estimate
+          passes the consensus test, it is fused with the VIO prediction along their connecting geodesic on SO(3);
+          otherwise, the update reduces to pure VIO propagation.</figcaption>
         </figure>
       </div>
     </div>
@@ -268,8 +303,10 @@
         <h2 class="title is-3">SF-SLAM Dataset</h2>
         <figure class="fig">
           <img src="images/fig3_dataset.png" alt="Sample image sequences from the SF-SLAM dataset with line clustering">
-          <figcaption><b>Figure 3.</b> Representative frames from the seven sequences of the SF-SLAM dataset,
-          overlaid with line-clustering results from SF-SLAM.</figcaption>
+          <figcaption><b>Figure 5.</b> Representative frames from the seven sequences of the SF-SLAM dataset,
+          overlaid with line-clustering results from SF-SLAM. The leftmost column shows a closed-loop start&ndash;end
+          pair whose views coincide; the rightmost an open-loop pair ending at the same structural corner several
+          stories higher.</figcaption>
         </figure>
         <div class="content has-text-justified" style="margin-top:1.3rem;">
           <p>
@@ -284,11 +321,11 @@
             dataset consists of two sequence types:
           </p>
           <ul>
-            <li><b>Closed-loop sequences:</b> The camera returns to its starting position, which anchors the
-            accumulated drift measurement over long trajectories (leftmost column of Figure 3: the start and end
+            <li><b>Closed-loop sequences:</b> The camera returns to its initial pose, which anchors the
+            accumulated drift measurement over long trajectories (leftmost column of Figure 5: the start and end
             views coincide).</li>
             <li><b>Open-loop sequences:</b> The camera climbs stairs and ends at a repeating structural corner several
-            stories above the starting point (rightmost column of Figure 3: the start and end views show the same
+            stories above the start point (rightmost column of Figure 5: the start and end views show the same
             corner on different stories).</li>
           </ul>
         </div>
@@ -329,7 +366,8 @@
             Across closed-loop and open-loop sequences, SF-SLAM achieves the lowest final drift error (FDE) on nearly
             every sequence against recent baselines &mdash; HI-SLAM2, StructVIO, ORB-SLAM3, DROID-SLAM, and
             Planar-SLAM &mdash; without relying on loop closure (the exception is the Parking Lot, where a baseline's
-            loop closure snaps its endpoints together). Monocular baselines are Sim(3)-aligned to the ARKit reference before scoring.
+            loop closure snaps its endpoints together). The monocular baseline is aligned to the ARKit reference by
+            Sim(3) Umeyama alignment (evo toolkit) and the FDE is computed with the recovered scale.
             In every table, <b>best is bold</b> and <u>second-best is underlined</u>; &ldquo;&ndash;&rdquo; marks
             tracking failure or no reported result.
           </p>
@@ -338,7 +376,7 @@
         <h3 class="title is-4" style="margin-bottom:0.7rem;">Closed-loop sequences</h3>
         <div class="table-scroll">
           <table class="restable">
-            <caption>Table II. Evaluation results of FDE [m] on author-collected closed-loop datasets.</caption>
+            <caption>Table II. Evaluation results of FDE [m] on author-collected closed-loop sequences.</caption>
             <thead>
               <tr><th>Sequence</th><th>HI-SLAM2</th><th>StructVIO</th><th>ORB-SLAM3</th><th>DROID-SLAM</th><th>Planar-SLAM</th><th class="ours-col">SF-SLAM (Ours)</th></tr>
             </thead>
@@ -393,7 +431,7 @@
           </div>
         </div>
         <p class="has-text-grey" style="font-size:0.87rem; text-align:left; margin-top:0.7rem;">
-          <b>Figure 4.</b> Qualitative comparisons on closed-loop datasets. Green and blue dots represent the starting
+          <b>Figure 6.</b> Qualitative comparisons on closed-loop sequences. Green and blue dots represent the start
           and end points of each trajectory, respectively. For the Planar-SLAM, we plot the results until tracking
           fails.
         </p>
@@ -401,7 +439,7 @@
         <h3 class="title is-4" style="margin:2.2rem 0 0.7rem;">Open-loop (inter-floor) sequences</h3>
         <div class="table-scroll">
           <table class="restable">
-            <caption>Table III. Evaluation results of FDE [m] on author-collected open-loop datasets.</caption>
+            <caption>Table III. Evaluation results of FDE [m] on author-collected open-loop sequences.</caption>
             <thead>
               <tr><th>Sequence</th><th>HI-SLAM2</th><th>StructVIO</th><th>ORB-SLAM3</th><th>DROID-SLAM</th><th>Planar-SLAM</th><th class="ours-col">SF-SLAM (Ours)</th></tr>
             </thead>
@@ -445,14 +483,14 @@
           </div>
         </div>
         <p class="has-text-grey" style="font-size:0.87rem; text-align:left; margin-top:0.7rem;">
-          <b>Figure 5.</b> Qualitative comparisons on open-loop dataset. Green and blue dots represent the starting
+          <b>Figure 7.</b> Qualitative comparisons on open-loop sequences. Green and blue dots represent the start
           and end points of each trajectory, respectively. For the Planar-SLAM, we plot the results until tracking
           fails.
         </p>
 
         <figure class="fig" style="margin-top:2.2rem;">
           <img src="images/fig4_results.png" alt="3D map reconstructions of planes and lines on two sequences">
-          <figcaption><b>Figure 6.</b> 3D map reconstructions comprising planes and lines, generated by the proposed
+          <figcaption><b>Figure 8.</b> 3D map reconstructions comprising planes and lines, generated by the proposed
           SF-SLAM on two sequences from our dataset. For each sequence, the left panel shows the planes and lines
           overlaid onto the point cloud, while the right panel displays the plane and line map. The 3D planes aligned
           to the MW DDs are colored red, green, and blue. The 3D lines aligned to the SFW DDs are colored red, green,
@@ -473,16 +511,16 @@
             <caption>Table IV. Ablation study of FDE [m] on use of structure-aware line estimation.</caption>
             <thead>
               <tr><th rowspan="2">Sequence</th><th colspan="3">Final Drift Error (FDE) [m] &darr;</th></tr>
-              <tr><th>VIO</th><th>VIO + Plane</th><th class="ours-col">VIO + Plane + Line&nbsp;(Ours)</th></tr>
+              <tr><th>VIO</th><th>VIO + Plane<br><span style="font-weight:400; color:#7a7a7a;">(Ours w/o Line)</span></th><th class="ours-col">VIO + Plane + Line&nbsp;(Ours)</th></tr>
             </thead>
             <tbody>
-              <tr><td>Office Building (return)</td><td>0.909</td><td>0.131</td><td class="ours-col ours">0.024</td></tr>
-              <tr><td>Mixed-use Building</td><td>0.469</td><td>0.051</td><td class="ours-col ours">0.046</td></tr>
-              <tr><td>Academic Building A</td><td>0.549</td><td>0.840</td><td class="ours-col ours">0.089</td></tr>
-              <tr><td>Parking Lot</td><td>0.737</td><td>0.312</td><td class="ours-col ours">0.164</td></tr>
-              <tr><td>Office Building (ascending)</td><td>1.119</td><td>0.335</td><td class="ours-col ours">0.215</td></tr>
-              <tr><td>Apartment Building</td><td>0.324</td><td>0.185</td><td class="ours-col ours">0.070</td></tr>
-              <tr><td>Academic Building B</td><td>0.324</td><td>0.240</td><td class="ours-col ours">0.090</td></tr>
+              <tr><td>Office Building (return)</td><td>0.909</td><td class="second">0.131</td><td class="ours-col best">0.024</td></tr>
+              <tr><td>Mixed-use Building</td><td>0.469</td><td class="second">0.051</td><td class="ours-col best">0.046</td></tr>
+              <tr><td>Academic Building A</td><td class="second">0.549</td><td>0.840</td><td class="ours-col best">0.089</td></tr>
+              <tr><td>Parking Lot</td><td>0.737</td><td class="second">0.312</td><td class="ours-col best">0.164</td></tr>
+              <tr><td>Office Building (ascending)</td><td>1.119</td><td class="second">0.335</td><td class="ours-col best">0.215</td></tr>
+              <tr><td>Apartment Building</td><td>0.324</td><td class="second">0.185</td><td class="ours-col best">0.070</td></tr>
+              <tr><td>Academic Building B</td><td>0.324</td><td class="second">0.240</td><td class="ours-col best">0.090</td></tr>
             </tbody>
           </table>
         </div>
