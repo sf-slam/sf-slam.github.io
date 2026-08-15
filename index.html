@@ -40,15 +40,21 @@
   }
   .publication-video iframe { position:absolute; top:0; left:0; width:100%; height:100%; }
 
+  /* ---- supplementary demo video ---- */
+  .demo-video { width:100%; height:auto; display:block; border:1px solid #e0e0e0;
+    border-radius:10px; background:#fff; }
+
   /* ---- figures ---- */
   figure.fig { margin:0; }
-  figure.fig > img {
+  figure.fig > img, figure.fig > a.zoom > img {
     width:100%; height:auto; border:1px solid #e0e0e0; background:#fff; display:block;
   }
   figure.fig figcaption {
     margin-top:0.7rem; color:#7a7a7a; font-size:0.92rem; line-height:1.55; text-align:left;
   }
   figure.fig figcaption b { color:#363636; }
+  figure.fig a.zoom { display:block; }
+  figure.fig a.zoom:hover img { border-color:#b5b5b5; }
 
   /* ---- narrower stand-alone figures (method diagrams) ---- */
   figure.fig.is-narrow > img { max-width:640px; margin:0 auto; }
@@ -119,6 +125,7 @@
   <div id="navMenu" class="navbar-menu">
     <div class="navbar-start" style="flex-grow:1; justify-content:center;">
       <a class="navbar-item" href="#abstract">Abstract</a>
+      <a class="navbar-item" href="#video">Video</a>
       <a class="navbar-item" href="#method">Method</a>
       <a class="navbar-item" href="#dataset">Dataset</a>
       <a class="navbar-item" href="#results">Results</a>
@@ -158,8 +165,8 @@
                 <span class="icon"><i class="ai ai-arxiv"></i></span><span>arXiv</span></a></span>
               <span class="link-block"><a href="#" class="external-link button is-normal is-rounded is-dark">
                 <span class="icon"><i class="fas fa-file-pdf"></i></span><span>Paper</span></a></span>
-              <span class="link-block"><a href="#" class="external-link button is-normal is-rounded is-dark">
-                <span class="icon"><i class="fab fa-youtube"></i></span><span>Video</span></a></span>
+              <span class="link-block"><a href="#video" class="external-link button is-normal is-rounded is-dark">
+                <span class="icon"><i class="fas fa-play"></i></span><span>Video</span></a></span>
               <span class="link-block"><a href="#" class="external-link button is-normal is-rounded is-dark">
                 <span class="icon"><i class="fab fa-github"></i></span><span>Code</span></a></span>
             </div>
@@ -185,11 +192,10 @@
         <figcaption><b>Figure 1.</b> SF-SLAM running on the Academic Building B (staircase) sequence: clustered
         structural lines (left) and estimated surface normals (right).</figcaption>
       </figure>
-      <div class="has-text-centered"><span class="editme">Placeholder clips &mdash; to be replaced with the final teaser video.</span></div>
       <p class="tldr-line">
-        <b>TL;DR:</b> Staircases and <b>inter-floor</b> transitions add slanted structure that breaks the Manhattan
+        <b>TL;DR:</b> Staircases and <b>inter-floor</b> transitions add sloping structure that breaks the Manhattan
         world and makes most structural SLAM drift. Using the <b>San Francisco world</b> (Manhattan triad + four
-        equally inclined slope directions), SF-SLAM anchors a drift-free rotation and turns planes and slanted lines
+        equally inclined slope directions), SF-SLAM anchors a drift-free rotation and turns planes and sloping lines
         into 1-D coordinates, extending efficient linear-Kalman-filter SLAM from <b>intra-floor</b> to inter-floor
         scenes.
       </p>
@@ -206,23 +212,45 @@
         <div class="content has-text-justified">
           <p>
             We present <b>San Francisco SLAM (SF-SLAM)</b>, a structural RGB-D SLAM algorithm for accurate 6-DoF
-            camera localization and mapping in geometrically complex structured environments. Most existing visual
+            camera localization and mapping in geometrically complex structured environments. Existing visual
             SLAM methods often fail in textureless and repetitive scenes because feature scarcity and spatial
             ambiguity cause cumulative trajectory drift and tracking loss. These failures become more severe in
-            staircases and inter-floor spaces, where repeated layouts and slanted structures fall outside the
+            staircases and inter-floor spaces, where repeated layouts and sloping structures fall outside the
             assumptions of the Manhattan world.
             To address these problems, we detect planes and lines to build a reliable global
             <b>San Francisco world (SFW)</b> map while simultaneously estimating 6-DoF camera poses, capturing
-            structural regularities beyond orthogonal layouts. We decouple rotation and translation using
-            structure-consistent absolute rotation estimates and represent structural landmarks with compact,
-            structure-aligned parameters. This formulation streamlines state estimation and enables robust camera
-            pose tracking and global structural mapping. Our approach jointly leverages both inter-floor planar and
-            line regularities to preserve trajectory consistency in environments where existing methods often fail.
-            Our experiments in various SFW scenes show that our approach effectively reduces the accumulated drift
-            during inter-floor transitions and outperforms state-of-the-art SLAM methods in challenging real-world
-            environments.
+            structural regularities beyond orthogonal layouts. Anchoring orientation with structure-consistent
+            absolute-rotation estimates removes rotation from the state and reduces planes and lines to 1-D
+            invariant coordinates, yielding linear measurement models for camera translation and the global map.
+            Our approach leverages both inter-floor plane and line regularities to preserve trajectory consistency
+            in environments that violate the Manhattan world assumption.
+            Our experiments in various SFW-structured scenes show that our approach effectively reduces the
+            accumulated drift during inter-floor transitions and outperforms state-of-the-art SLAM methods in
+            challenging real-world environments.
           </p>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ VIDEO ============ -->
+<section class="section" id="video" style="padding-top:0;">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Supplementary Video</h2>
+        <video class="demo-video" controls preload="metadata" playsinline
+               poster="images/video_poster.jpg"
+               aria-label="SF-SLAM supplementary video: line detection, clustering, surface normals, and trajectory comparison across the dataset sequences">
+          <source src="videos/final_demo.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <p class="has-text-grey" style="font-size:0.87rem; text-align:left; margin-top:0.7rem;">
+          Full run of SF-SLAM on the dataset sequences (2:48). Each segment shows the detected line
+          segments, the SFW line clustering, and the depth-based surface normals alongside side- and top-view
+          trajectory comparisons against StructVIO, DROID-SLAM, ORB-SLAM3, HI-SLAM2, and Planar-SLAM.
+        </p>
       </div>
     </div>
   </div>
@@ -243,7 +271,7 @@
             consensus</b> test: inconsistent compass estimates are rejected outright (reverting to pure VIO), while
             accepted ones are down-weighted by their consensus score. MW-aligned planes are then refined to a single
             offset value via a <b>1-point RANSAC</b>, while SFW-aligned lines are recovered through PCA on sampled
-            3-D points and classified as orthogonal or slanted. Because rotation is removed from the state and each
+            3-D points and classified as orthogonal or sloping. Because rotation is removed from the state and each
             structural constraint reduces to a <b>1-D invariant coordinate</b>, the measurement models become strictly
             linear in the camera translation, yielding a single decoupled <b>linear Kalman filter</b> with no
             Jacobians and no accumulated linearization error.
@@ -302,11 +330,14 @@
       <div class="column is-four-fifths">
         <h2 class="title is-3">SF-SLAM Dataset</h2>
         <figure class="fig">
-          <img src="images/fig3_dataset.png" alt="Sample image sequences from the SF-SLAM dataset with line clustering">
+          <a class="zoom" href="images/fig3_dataset.png" target="_blank" rel="noopener"
+             title="Open the full-resolution figure">
+            <img src="images/fig3_dataset.png" alt="Representative frames from the seven SF-SLAM dataset sequences, overlaid with line clustering">
+          </a>
           <figcaption><b>Figure 5.</b> Representative frames from the seven sequences of the SF-SLAM dataset,
-          overlaid with line-clustering results from SF-SLAM. The leftmost column shows a closed-loop start&ndash;end
-          pair whose views coincide; the rightmost an open-loop pair ending at the same structural corner several
-          stories higher.</figcaption>
+          overlaid with line-clustering results from SF-SLAM, one column per sequence. The leftmost column shows a
+          closed-loop start&ndash;end pair whose views coincide; the rightmost an open-loop pair ending at the same
+          structural corner several stories higher.</figcaption>
         </figure>
         <div class="content has-text-justified" style="margin-top:1.3rem;">
           <p>
@@ -344,7 +375,7 @@
               <tr><td>Parking Lot</td><td>3185</td><td>164.596</td><td>2.934</td></tr>
               <tr><td colspan="4" style="text-align:left; font-style:italic; background:#efefef; color:#4a4a4a;">Open-loop sequences</td></tr>
               <tr><td>Office Building (ascending)</td><td>4990</td><td>205.581</td><td>6.475</td></tr>
-              <tr><td>Apartment Building</td><td>12240</td><td>488.302</td><td>17.898</td></tr>
+              <tr><td>Apartment Building</td><td>12223</td><td>488.302</td><td>17.898</td></tr>
               <tr><td>Academic Building B</td><td>3471</td><td>107.625</td><td>4.510</td></tr>
             </tbody>
           </table>
@@ -363,11 +394,12 @@
 
         <div class="content has-text-justified">
           <p>
-            Across closed-loop and open-loop sequences, SF-SLAM achieves the lowest final drift error (FDE) on nearly
-            every sequence against recent baselines &mdash; HI-SLAM2, StructVIO, ORB-SLAM3, DROID-SLAM, and
-            Planar-SLAM &mdash; without relying on loop closure (the exception is the Parking Lot, where a baseline's
-            loop closure snaps its endpoints together). The monocular baseline is aligned to the ARKit reference by
-            Sim(3) Umeyama alignment (evo toolkit) and the FDE is computed with the recovered scale.
+            Across closed-loop and open-loop sequences, SF-SLAM achieves the lowest final drift error (FDE) on six
+            of the seven sequences against recent baselines &mdash; HI-SLAM2, StructVIO, ORB-SLAM3, DROID-SLAM, and
+            Planar-SLAM &mdash; without an explicit loop-closure module (the exception is the Parking Lot, where a
+            baseline's loop closure snaps its endpoints together). The monocular baseline, HI-SLAM2, is aligned to
+            the ARKit reference by Sim(3) Umeyama alignment (evo toolkit) and its FDE is computed with the recovered
+            scale.
             In every table, <b>best is bold</b> and <u>second-best is underlined</u>; &ldquo;&ndash;&rdquo; marks
             tracking failure or no reported result.
           </p>
@@ -432,7 +464,7 @@
         </div>
         <p class="has-text-grey" style="font-size:0.87rem; text-align:left; margin-top:0.7rem;">
           <b>Figure 6.</b> Qualitative comparisons on closed-loop sequences. Green and blue dots represent the start
-          and end points of each trajectory, respectively. For the Planar-SLAM, we plot the results until tracking
+          and end points of each trajectory, respectively. For Planar-SLAM, we plot the results until tracking
           fails.
         </p>
 
@@ -444,7 +476,7 @@
               <tr><th>Sequence</th><th>HI-SLAM2</th><th>StructVIO</th><th>ORB-SLAM3</th><th>DROID-SLAM</th><th>Planar-SLAM</th><th class="ours-col">SF-SLAM (Ours)</th></tr>
             </thead>
             <tbody>
-              <tr><td>Office Building (ascending)</td><td>34.146</td><td>5.254</td><td class="second">7.060</td><td>11.763</td><td class="na">&ndash;</td><td class="ours-col best">0.215</td></tr>
+              <tr><td>Office Building (ascending)</td><td>34.146</td><td class="second">5.254</td><td>7.060</td><td>11.763</td><td class="na">&ndash;</td><td class="ours-col best">0.215</td></tr>
               <tr><td>Apartment Building</td><td>38.700</td><td>4.065</td><td class="second">3.759</td><td>73.204</td><td class="na">&ndash;</td><td class="ours-col best">0.070</td></tr>
               <tr><td>Academic Building B</td><td class="second">0.098</td><td>7.631</td><td>5.262</td><td>9.350</td><td class="na">&ndash;</td><td class="ours-col best">0.090</td></tr>
             </tbody>
@@ -484,7 +516,7 @@
         </div>
         <p class="has-text-grey" style="font-size:0.87rem; text-align:left; margin-top:0.7rem;">
           <b>Figure 7.</b> Qualitative comparisons on open-loop sequences. Green and blue dots represent the start
-          and end points of each trajectory, respectively. For the Planar-SLAM, we plot the results until tracking
+          and end points of each trajectory, respectively. For Planar-SLAM, we plot the results until tracking
           fails.
         </p>
 
@@ -497,18 +529,22 @@
           blue, and cyan. Magenta lines indicate the estimated trajectories.</figcaption>
         </figure>
 
-        <h3 class="title is-4" style="margin:2.2rem 0 0.7rem;">Ablation study</h3>
+        <h3 class="title is-4" style="margin:2.2rem 0 0.7rem;">Ablation study on the use of line landmarks</h3>
         <div class="content has-text-justified">
           <p>
-            The ablation below isolates the contribution of each structural primitive (FDE in metres; lower is
-            better). Adding plane landmarks to the VIO baseline reduces drift on most sequences, and adding line
-            landmarks reduces it further on all of them &mdash; the two primitives are complementary, with lines
-            stabilising low-texture regions where large planes are scarce.
+            Plane landmarks are the base structural measurement of the linear formulation, so this ablation measures
+            what line landmarks add on top of them (FDE in metres; lower is better). Adding line constraints reduces
+            FDE on every sequence relative to the plane-only configuration. The effect is clearest on
+            <b>Academic Building A</b>, where the plane-only configuration is in fact worse than VIO alone: the
+            stairwell exposes few large planar surfaces within the effective depth range, so plane measurements
+            arrive intermittently and occasional spurious associations perturb an otherwise smooth estimate. Adding
+            line constraints removes this failure. Conversely, when line segments are short or fragmented, the
+            estimator continues to rely primarily on planar landmarks.
           </p>
         </div>
         <div class="table-scroll">
           <table class="restable">
-            <caption>Table IV. Ablation study of FDE [m] on use of structure-aware line estimation.</caption>
+            <caption>Table IV. Ablation study of FDE [m] on the use of line landmarks.</caption>
             <thead>
               <tr><th rowspan="2">Sequence</th><th colspan="3">Final Drift Error (FDE) [m] &darr;</th></tr>
               <tr><th>VIO</th><th>VIO + Plane<br><span style="font-weight:400; color:#7a7a7a;">(Ours w/o Line)</span></th><th class="ours-col">VIO + Plane + Line&nbsp;(Ours)</th></tr>
@@ -519,7 +555,7 @@
               <tr><td>Academic Building A</td><td class="second">0.549</td><td>0.840</td><td class="ours-col best">0.089</td></tr>
               <tr><td>Parking Lot</td><td>0.737</td><td class="second">0.312</td><td class="ours-col best">0.164</td></tr>
               <tr><td>Office Building (ascending)</td><td>1.119</td><td class="second">0.335</td><td class="ours-col best">0.215</td></tr>
-              <tr><td>Apartment Building</td><td>0.324</td><td class="second">0.185</td><td class="ours-col best">0.070</td></tr>
+              <tr><td>Apartment Building</td><td>0.337</td><td class="second">0.185</td><td class="ours-col best">0.070</td></tr>
               <tr><td>Academic Building B</td><td>0.324</td><td class="second">0.240</td><td class="ours-col best">0.090</td></tr>
             </tbody>
           </table>
