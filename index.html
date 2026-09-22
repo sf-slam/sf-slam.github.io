@@ -172,11 +172,9 @@
         structural lines (left) and estimated surface normals (right).</figcaption>
       </figure>
       <p class="tldr-line">
-        <b>TL;DR:</b> Staircases and <b>inter-floor</b> transitions add sloping structure that breaks the Manhattan
-        world and makes most structural SLAM drift. Using the <b>San Francisco world</b> (Manhattan triad + four
-        equally inclined slope directions), SF-SLAM anchors a drift-free rotation and turns planes and sloping lines
-        into 1-D coordinates, extending efficient linear-Kalman-filter SLAM from <b>intra-floor</b> to inter-floor
-        scenes.
+        <b>TL;DR:</b> Staircases and inter-floor transitions break the Manhattan world and make structural SLAM
+        drift. SF-SLAM uses the <b>San Francisco world</b> to anchor a drift-free rotation and tracks planes and
+        sloping lines with a single linear Kalman filter.
       </p>
     </div>
   </div>
@@ -226,9 +224,8 @@
           Your browser does not support the video tag.
         </video>
         <p class="has-text-grey" style="font-size:0.87rem; text-align:left; margin-top:0.7rem;">
-          Full run of SF-SLAM on the dataset sequences (2:48). Each segment shows the detected line
-          segments, the SFW line clustering, and the depth-based surface normals alongside side- and top-view
-          trajectory comparisons against StructVIO, DROID-SLAM, ORB-SLAM3, HI-SLAM2, and Planar-SLAM.
+          Full run of SF-SLAM on the dataset sequences, compared with StructVIO, DROID-SLAM, ORB-SLAM3, HI-SLAM2,
+          and Planar-SLAM.
         </p>
       </div>
     </div>
@@ -243,41 +240,18 @@
         <h2 class="title is-3">Method</h2>
         <div class="content has-text-justified">
           <p>
-            The <b>San Francisco world</b> extends the Manhattan triad with four sloping dominant directions that
-            share a common inclination, so the entire frame is fixed by just 4 degrees of freedom. SF-SLAM exploits
-            this structure in three stages. A <b>consensus-weighted rotation fusion</b> combines the locally accurate
-            VIO rotation with a drift-free <b>SFW Visual Compass</b> anchor, gated online by a <b>long-baseline
-            consensus</b> test: inconsistent compass estimates are rejected outright (reverting to pure VIO), while
-            accepted ones are down-weighted by their consensus score. MW-aligned planes are then refined to a single
-            offset value via a <b>1-point RANSAC</b>, while SFW-aligned lines are recovered through PCA on sampled
-            3-D points and classified as orthogonal or sloping. Because rotation is removed from the state and each
-            structural constraint reduces to a <b>1-D invariant coordinate</b>, the measurement models become strictly
-            linear in the camera translation, yielding a single decoupled <b>linear Kalman filter</b> with no
-            Jacobians and no accumulated linearization error.
+            The <b>San Francisco world</b> adds four sloping directions to the Manhattan triad. SF-SLAM fuses VIO
+            rotation with a drift-free <b>SFW Visual Compass</b> and rejects inconsistent compass estimates with a
+            <b>long-baseline consensus</b> test. With rotation fixed, each plane and line reduces to a
+            <b>1-D coordinate</b>, so a single <b>linear Kalman filter</b> estimates the translation and the map.
           </p>
         </div>
         <figure class="fig" style="margin-top:0.5rem;">
           <img src="images/figure_pipeline.png" alt="Overview of the proposed SF-SLAM pipeline">
-          <figcaption><b>Figure 2.</b> Overview of the proposed SF-SLAM pipeline. The feature extraction module
-          detects image lines and estimates depth-based surface normals. The consensus-weighted rotation fusion module
-          obtains the absolute-rotation estimate from the SFW Visual Compass using a single line and a tracked plane
-          normal, and fuses it with the VIO prediction using long-baseline consensus. The fused rotation guides
-          MW-aligned plane and SFW-aligned line estimation and directly provides the rotational component of the
-          estimated pose, while the linear Kalman filter combines the resulting structural measurements with the
-          VIO translation to estimate the camera translation and the global structural map.</figcaption>
+          <figcaption><b>Figure 2.</b> SF-SLAM pipeline: line and surface-normal extraction,
+          consensus-weighted rotation fusion, structure-aware plane and line estimation, and a linear Kalman
+          filter.</figcaption>
         </figure>
-
-        <div class="content has-text-justified" style="margin-top:1.6rem;">
-          <p>
-            The compass is an <i>absolute</i> reference, but it is not always trustworthy: a lone line parallel to the
-            dominant plane adds no independent constraint, a vanishing-point assignment can be ambiguous, reflective
-            surfaces and moving doors remove the tracked plane, and the estimated inclination can disagree across
-            lines. Rather than gating each frame on its own residual &mdash; which cannot separate a
-            fraction-of-a-degree bias from ordinary VIO noise &mdash; SF-SLAM scores every compass estimate against an
-            <b>anchor buffer</b> of the seven most recent accepted frames, spaced at least 100 frames apart, so the
-            agreement is always measured over a baseline of at least 600 frames.
-          </p>
-        </div>
       </div>
     </div>
   </div>
@@ -294,31 +268,17 @@
              title="Open the full-resolution figure">
             <img src="images/fig3_dataset.png" alt="Representative frames from the seven SF-SLAM dataset sequences, overlaid with line clustering">
           </a>
-          <figcaption><b>Figure 3.</b> Representative frames from the seven sequences of the SF-SLAM dataset,
-          overlaid with line-clustering results from SF-SLAM, one column per sequence. The leftmost column shows a
-          closed-loop start&ndash;end pair whose views coincide; the rightmost an open-loop pair ending at the same
-          structural corner several stories higher.</figcaption>
+          <figcaption><b>Figure 3.</b> Frames from the seven dataset sequences with SF-SLAM line
+          clustering. Left: closed-loop start and end views. Right: open-loop views of the same corner on
+          different stories.</figcaption>
         </figure>
         <div class="content has-text-justified" style="margin-top:1.3rem;">
           <p>
-            General-purpose RGB-D benchmarks are largely confined to room-scale living-room and office scenes and do
-            not include sustained inter-floor motion. Our SF-SLAM dataset addresses this gap by providing long,
-            continuous RGB-D trajectories spanning multiple floors, with sustained motion through staircases and other
-            sloped structures. We capture it using an <b>iPhone 15 Pro Max</b> with the Stray Scanner application
-            across large-scale environments exhibiting diverse SFW structures, including staircases, ramps, and
-            inter-floor transitions. The application records RGB-D sequences along with the corresponding ARKit
-            trajectories. Table I summarizes the sequence statistics, where angular travel denotes the cumulative
-            rotational motion over each sequence and is reported in units of 10<sup>3</sup> degrees. Our SF-SLAM
-            dataset consists of two sequence types:
+            Existing RGB-D benchmarks rarely include sustained inter-floor motion. The SF-SLAM dataset provides long
+            multi-floor RGB-D sequences through staircases and ramps, captured with an <b>iPhone 15 Pro Max</b>
+            (Stray Scanner, with ARKit trajectories). <b>Closed-loop</b> sequences return to the start pose, and
+            <b>open-loop</b> sequences end at the same structural corner several stories higher.
           </p>
-          <ul>
-            <li><b>Closed-loop sequences:</b> The camera returns to its initial pose, which anchors the
-            accumulated drift measurement over long trajectories (leftmost column of Figure 3: the start and end
-            views coincide).</li>
-            <li><b>Open-loop sequences:</b> The camera climbs stairs and ends at a repeating structural corner several
-            stories above the start point (rightmost column of Figure 3: the start and end views show the same
-            corner on different stories).</li>
-          </ul>
         </div>
 
         <div class="table-scroll">
@@ -354,14 +314,9 @@
 
         <div class="content has-text-justified">
           <p>
-            Across closed-loop and open-loop sequences, SF-SLAM achieves the lowest final drift error (FDE) on six
-            of the seven sequences against recent baselines &mdash; HI-SLAM2, StructVIO, ORB-SLAM3, DROID-SLAM, and
-            Planar-SLAM &mdash; without an explicit loop-closure module (the exception is the Parking Lot, where a
-            baseline's loop closure snaps its endpoints together). The monocular baseline, HI-SLAM2, is aligned to
-            the ARKit reference by Sim(3) Umeyama alignment (evo toolkit) and its FDE is computed with the recovered
-            scale.
-            In every table, <b>best is bold</b> and <u>second-best is underlined</u>; &ldquo;&ndash;&rdquo; marks
-            tracking failure or no reported result.
+            SF-SLAM achieves the lowest final drift error (FDE) on six of the seven sequences without a
+            loop-closure module. <b>Best is bold</b>, <u>second-best is underlined</u>, and &ldquo;&ndash;&rdquo;
+            marks tracking failure.
           </p>
         </div>
 
@@ -423,9 +378,7 @@
           </div>
         </div>
         <p class="has-text-grey" style="font-size:0.87rem; text-align:left; margin-top:0.7rem;">
-          <b>Figure 4.</b> Qualitative comparisons on closed-loop sequences. Green and blue dots represent the start
-          and end points of each trajectory, respectively. For Planar-SLAM, we plot the results until tracking
-          fails.
+          <b>Figure 4.</b> Closed-loop trajectories, top view. Green: start. Blue: end.
         </p>
 
         <h3 class="title is-4" style="margin:2.2rem 0 0.7rem;">Open-loop (inter-floor) sequences</h3>
@@ -475,31 +428,20 @@
           </div>
         </div>
         <p class="has-text-grey" style="font-size:0.87rem; text-align:left; margin-top:0.7rem;">
-          <b>Figure 5.</b> Qualitative comparisons on open-loop sequences. Green and blue dots represent the start
-          and end points of each trajectory, respectively. For Planar-SLAM, we plot the results until tracking
-          fails.
+          <b>Figure 5.</b> Open-loop trajectories, top view. Green: start. Blue: end.
         </p>
 
         <figure class="fig" style="margin-top:2.2rem;">
           <img src="images/fig4_results.png" alt="3D map reconstructions of planes and lines on two sequences">
-          <figcaption><b>Figure 6.</b> 3D map reconstructions comprising planes and lines, generated by the proposed
-          SF-SLAM on two sequences from our dataset. For each sequence, the left panel shows the planes and lines
-          overlaid onto the point cloud, while the right panel displays the plane and line map. The 3D planes aligned
-          to the MW DDs are colored red, green, and blue. The 3D lines aligned to the SFW DDs are colored red, green,
-          blue, and cyan. Magenta lines indicate the estimated trajectories.</figcaption>
+          <figcaption><b>Figure 6.</b> Plane and line maps built by SF-SLAM on two sequences.
+          Magenta is the estimated trajectory.</figcaption>
         </figure>
 
         <h3 class="title is-4" style="margin:2.2rem 0 0.7rem;">Ablation study on the use of line landmarks</h3>
         <div class="content has-text-justified">
           <p>
-            Plane landmarks are the base structural measurement of the linear formulation, so this ablation measures
-            what line landmarks add on top of them (FDE in metres; lower is better). Adding line constraints reduces
-            FDE on every sequence relative to the plane-only configuration. The effect is clearest on
-            <b>Academic Building A</b>, where the plane-only configuration is in fact worse than VIO alone: the
-            stairwell exposes few large planar surfaces within the effective depth range, so plane measurements
-            arrive intermittently and occasional spurious associations perturb an otherwise smooth estimate. Adding
-            line constraints removes this failure. Conversely, when line segments are short or fragmented, the
-            estimator continues to rely primarily on planar landmarks.
+            Adding line landmarks to planes reduces FDE on every sequence. The gain is largest on
+            <b>Academic Building A</b>, where the stairwell shows few large planes.
           </p>
         </div>
         <div class="table-scroll">
