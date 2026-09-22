@@ -26,11 +26,11 @@
   .teaser .hero-body { padding-top:0; padding-bottom:2.5rem; }
   .teaser .subtitle { font-size:1.35rem; font-family:'Google Sans', sans-serif; }
   .tldr-line { font-family:'Google Sans', sans-serif; font-size:1.08rem; line-height:1.7;
-    text-align:justify; color:#2a3038; max-width:840px; margin:1.7rem auto 0; }
+    text-align:justify; color:#2a3038; max-width:920px; margin:1.7rem auto 0; }
   .tldr-line b { color:#363636; }
 
   /* ---- teaser videos ---- */
-  .teaser-media { display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; max-width:760px; margin:0 auto; }
+  .teaser-media { display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; max-width:920px; margin:0 auto; }
   .teaser-media video { width:100%; height:auto; display:block; border:1px solid #e0e0e0; border-radius:8px; background:#000; }
   @media (max-width:600px) { .teaser-media { grid-template-columns:1fr; } }
 
@@ -100,10 +100,6 @@
 
   pre code { font-size:0.9rem; }
 
-  .editme {
-    background:#fff8e6; border:1px dashed #d9b441; color:#7a5b07;
-    border-radius:8px; padding:0.4rem 0.7rem; font-size:0.8rem; display:inline-block; margin-top:0.5rem;
-  }
   .footer a { color:hsl(204,86%,53%); }
 
   @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
@@ -134,7 +130,7 @@
 <!-- ============ HERO / TITLE ============ -->
 <section class="hero">
   <div class="hero-body">
-    <div class="container is-max-desktop">
+    <div class="container is-max-widescreen">
       <div class="columns is-centered">
         <div class="column has-text-centered">
           <h1 class="title is-1 publication-title">San Francisco SLAM</h1>
@@ -149,6 +145,10 @@
             <div class="publication-links">
               <span class="link-block"><a href="#video" class="external-link button is-normal is-rounded is-dark">
                 <span class="icon"><i class="fas fa-play"></i></span><span>Video</span></a></span>
+              <span class="link-block"><a class="external-link button is-normal is-rounded is-dark" aria-disabled="true" title="Coming soon" style="opacity:.55;cursor:default;pointer-events:none;">
+                <span class="icon"><i class="fab fa-github"></i></span><span>Code (Coming Soon)</span></a></span>
+              <span class="link-block"><a class="external-link button is-normal is-rounded is-dark" aria-disabled="true" title="Coming soon" style="opacity:.55;cursor:default;pointer-events:none;">
+                <span class="icon"><i class="fas fa-database"></i></span><span>Dataset (Coming Soon)</span></a></span>
             </div>
           </div>
         </div>
@@ -159,7 +159,7 @@
 
 <!-- ============ TEASER ============ -->
 <section class="hero teaser">
-  <div class="container is-max-desktop">
+  <div class="container is-max-widescreen">
     <div class="hero-body">
       <figure class="fig" style="margin:0;">
         <div class="teaser-media">
@@ -184,7 +184,7 @@
 
 <!-- ============ ABSTRACT ============ -->
 <section class="section" id="abstract">
-  <div class="container is-max-desktop">
+  <div class="container is-max-widescreen">
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
         <h2 class="title is-3">Abstract</h2>
@@ -215,7 +215,7 @@
 
 <!-- ============ VIDEO ============ -->
 <section class="section" id="video" style="padding-top:0;">
-  <div class="container is-max-desktop">
+  <div class="container is-max-widescreen">
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
         <h2 class="title is-3">Supplementary Video</h2>
@@ -237,7 +237,7 @@
 
 <!-- ============ METHOD ============ -->
 <section class="section has-background-light" id="method">
-  <div class="container is-max-desktop">
+  <div class="container is-max-widescreen">
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
         <h2 class="title is-3">Method</h2>
@@ -285,7 +285,7 @@
 
 <!-- ============ DATASET ============ -->
 <section class="section" id="dataset">
-  <div class="container is-max-desktop">
+  <div class="container is-max-widescreen">
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
         <h2 class="title is-3">SF-SLAM Dataset</h2>
@@ -347,7 +347,7 @@
 
 <!-- ============ RESULTS ============ -->
 <section class="section has-background-light" id="results">
-  <div class="container is-max-desktop">
+  <div class="container is-max-widescreen">
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
         <h2 class="title is-3">Results</h2>
@@ -527,7 +527,7 @@
 
 <!-- ============ BIBTEX ============ -->
 <section class="section" id="bibtex">
-  <div class="container is-max-desktop content">
+  <div class="container is-max-widescreen content">
     <h2 class="title">BibTeX</h2>
     <pre><code>@article{sfslam2026,
   title   = {San Francisco SLAM: Structural Localization and
