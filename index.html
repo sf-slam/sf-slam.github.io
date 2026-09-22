@@ -162,14 +162,12 @@
   <div class="container is-max-widescreen">
     <div class="hero-body">
       <figure class="fig" style="margin:0;">
-        <div class="teaser-media">
-          <video src="videos/teaser_clustered_lines.mp4" autoplay loop muted playsinline
-                 aria-label="SF-SLAM clustered structural lines on the Academic Building B staircase sequence"></video>
-          <video src="videos/teaser_normals.mp4" autoplay loop muted playsinline
-                 aria-label="SF-SLAM surface-normal estimation on the Academic Building B staircase sequence"></video>
+        <div class="teaser-media" style="grid-template-columns:1fr;">
+          <video src="videos/teaser.mp4" poster="images/teaser_poster.jpg" autoplay loop muted playsinline
+                 aria-label="SF-SLAM building a plane and line map while climbing a multi-story staircase"></video>
         </div>
-        <figcaption><b>Figure 1.</b> SF-SLAM running on the Academic Building B (staircase) sequence: clustered
-        structural lines (left) and estimated surface normals (right).</figcaption>
+        <figcaption><b>Figure 1.</b> SF-SLAM building its plane and line map while climbing a multi-story
+        staircase.</figcaption>
       </figure>
       <p class="tldr-line">
         <b>TL;DR:</b> Staircases and inter-floor transitions break the Manhattan world and make structural SLAM
